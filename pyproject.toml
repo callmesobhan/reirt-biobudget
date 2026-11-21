@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "reirt-biobudget"
-version = "0.1.0"
+version = "0.2.0"
 description = "3D Deformable Biophysical Dose-Accumulation, DIR-Uncertainty Envelope, and Inverse Remaining-Budget Engine with Frontier Agent Harness for Multi-Course Re-Irradiation (Research Software — Not a Medical Device)"
 readme = "README.md"
 license = { file = "LICENSE" }

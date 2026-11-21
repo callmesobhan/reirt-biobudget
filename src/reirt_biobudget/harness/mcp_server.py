@@ -13,12 +13,19 @@ from pathlib import Path
 from typing import Any
 
 from reirt_biobudget import __version__
+from reirt_biobudget.budget_solver import solve_reirradiation_budget
 from reirt_biobudget.harness.agent_orchestrator import run_frontier_investigation
 from reirt_biobudget.io_loaders import (
     build_reirradiation_benchmark_from_openkbp,
     load_openkbp_patient,
 )
 from reirt_biobudget.ir import AbstentionError, CourseSpec, Modality, RadiobiologyModel
+from reirt_biobudget.ntcp_sobol import (
+    compute_geud,
+    compute_lkb_ntcp_from_geud,
+    get_lkb_spec,
+    run_joint_sobol_sensitivity,
+)
 from reirt_biobudget.ontology import TG263_OAR_LIBRARY, get_oar_constraint, normalize_tg263
 from reirt_biobudget.radiobiology import (
     conservative_recovery_fraction,
@@ -144,6 +151,44 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
             "required": ["patient_dir"],
         },
     },
+    {
+        "name": "biobudget_compute_lkb_ntcp",
+        "description": (
+            "Compute overflow-safe Generalized Equivalent Uniform Dose (gEUD) and Lyman-Kutcher-Burman "
+            "(LKB) Normal Tissue Complication Probability (%) using sourced QUANTEC/Burman parameters."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "oar_name": {"type": "string"},
+                "eqd2_voxels_gy": {
+                    "type": "array",
+                    "items": {"type": "number", "minimum": 0.0},
+                    "minItems": 1,
+                },
+            },
+            "required": ["oar_name", "eqd2_voxels_gy"],
+        },
+    },
+    {
+        "name": "biobudget_run_sobol_sensitivity",
+        "description": (
+            "Run exact Saltelli-Jansen quasi-Monte Carlo global Sobol sensitivity analysis (S_i, S_Ti, "
+            "and interaction S_Ti - S_i) across DIR spatial registration, tissue recovery, alpha/beta, "
+            "and Course-2 high-dose regime for a real OpenKBP clinical patient."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "patient_dir": {"type": "string"},
+                "oar_name": {"type": "string", "default": "SpinalCord"},
+                "output_mode": {"type": "string", "enum": ["eqd2", "ntcp"], "default": "eqd2"},
+                "tre_sigma_mm": {"type": "number", "default": 2.5},
+                "n_base_pow2": {"type": "integer", "default": 7},
+            },
+            "required": ["patient_dir"],
+        },
+    },
 ]
 
 
@@ -262,6 +307,60 @@ def dispatch_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
             "schedule_matrix": [row.model_dump(mode="json") for row in report.schedule_matrix],
             "critic_audit": report.critic_audit.model_dump(mode="json"),
         }
+
+    if name == "biobudget_compute_lkb_ntcp":
+        import numpy as np
+
+        lkb = get_lkb_spec(str(arguments["oar_name"]))
+        if lkb is None:
+            raise ValueError(f"No LKB NTCP specification found for '{arguments['oar_name']}'")
+        vox = np.asarray(arguments["eqd2_voxels_gy"], dtype=np.float64)
+        geud = compute_geud(vox, lkb.n)
+        ntcp_pct = float(compute_lkb_ntcp_from_geud(geud, lkb.td50_gy, lkb.m)) * 100.0
+        return {
+            "tg263_name": lkb.tg263_name,
+            "endpoint": lkb.endpoint,
+            "geud_gy": round(geud, 3),
+            "ntcp_pct": round(ntcp_pct, 3),
+            "td50_gy": lkb.td50_gy,
+            "m": lkb.m,
+            "n": lkb.n,
+            "citation": lkb.citation,
+            "doi": lkb.doi,
+        }
+
+    if name == "biobudget_run_sobol_sensitivity":
+        patient = load_openkbp_patient(Path(arguments["patient_dir"]))
+        case = build_reirradiation_benchmark_from_openkbp(patient)
+        oar = normalize_tg263(str(arguments.get("oar_name", "SpinalCord")))
+        if oar not in case.oar_masks_course2:
+            raise ValueError(f"OAR '{oar}' not present in patient {patient.patient_id}")
+        out = solve_reirradiation_budget(
+            case_id=case.case_id,
+            prior_course=case.prior_course,
+            prior_dose=case.prior_dose_course1,
+            planned_course=case.planned_course,
+            nominal_dvf_mm=case.nominal_dvf_mm,
+            nominal_inv_dvf_mm=case.nominal_inv_dvf_mm,
+            oar_masks_course2=case.oar_masks_course2,
+            body_mask_course2=case.body_mask_course2,
+            candidate_course2_dose=case.candidate_dose_course2,
+            tre_sigma_mm=float(arguments.get("tre_sigma_mm", 2.5)),
+            n_ensemble=16,
+            retain_ensemble_samples=True,
+        )
+        mask = case.oar_masks_course2[oar]
+        res = run_joint_sobol_sensitivity(
+            oar_name=oar,
+            prior_ensemble_vox=out.dir_envelope.extract_masked_ensemble(mask),
+            candidate_course2_vox=case.candidate_dose_course2.data[mask],
+            prior_course=case.prior_course,
+            planned_course=case.planned_course,
+            voxel_vol_cc=case.prior_dose_course1.voxel_volume_cc,
+            output_mode=str(arguments.get("output_mode", "eqd2")),
+            n_base_pow2=int(arguments.get("n_base_pow2", 7)),
+        )
+        return res.model_dump(mode="json")
 
     raise KeyError(f"Unknown MCP tool '{name}'")
 

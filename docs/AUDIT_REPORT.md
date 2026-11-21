@@ -1,8 +1,8 @@
 # Independent Engineering, Physics & Attribution Audit Report — `reirt-biobudget`
 
 **Audit Date:** 2026-11-21  
-**Software Version:** `0.1.0`  
-**Audit Scope:** Mathematical accuracy, numerical stability, AAPM TG-132 DIR verification, hard abstention gates, DICOM-RT & OpenKBP data integrity, visual quality of all 5 academic figures, code quality (`ruff`), and copyright/citation compliance.
+**Software Version:** `0.2.0`  
+**Audit Scope:** Mathematical accuracy, K-course multi-prior accumulation, clinical DICOM `REG`/`RTDOSE`/`RTSTRUCT` IOD round-trips, AAPM TG-132 DIR & landmark TRE verification, LKB/gEUD NTCP & Saltelli–Sobol' QMC sensitivity, hard abstention gates, visual quality of all 7 academic figures, CI/CD (`ruff` + `pytest`), and copyright/citation compliance.
 
 ---
 
@@ -10,13 +10,15 @@
 
 | Audit Pillar | Status | Verified Metric / Evidence |
 | :--- | :---: | :--- |
-| **Radiobiology Exactness & Inversion** | **PASS** | Max forward–inverse residual = **`2.84e-14 Gy`** across all 4 models (LQ, LQL, Lea–Catcheside, McNamara Proton) |
-| **AAPM TG-132 DIR Topology & ICE** | **PASS** | `folded_voxels = 0` (`min J = 0.978`), `ICE p95 = 0.0082 mm` (240x below 2.0 mm TG-132 target) |
-| **Hard Abstention & Safety Gates** | **PASS** | Verified `AbstentionError` on Jacobian folding ($J \le 0$), excessive ICE ($>5\ \mathrm{mm}$), missing/mismatched `FrameOfReferenceUID`, and premature CNS recovery |
-| **Automated Test Suite (`pytest`)** | **PASS** | **22 / 22 tests passed** (`15.24 s`), 87–97% line coverage across core physics, DIR, provenance, IR, ontology, IO, and agent harness modules |
+| **Radiobiology Exactness & Inversion ($K$-Course)** | **PASS** | Max forward–inverse residual = **`2.84e-14 Gy`** across single- and $K=2$ multi-prior-course runs |
+| **Clinical DICOM-RT IOD Interoperability** | **PASS** | Lossless round-trip verified for Deformable `REG` (`< 1e-5 mm`), `RTDOSE` budget (`< 0.005 Gy`), and closed-planar `RTSTRUCT` shells with numeric VR-UI UIDs (`0` pydicom warnings) |
+| **AAPM TG-132 DIR Topology, ICE & Landmarks** | **PASS** | Across `pt_1`–`pt_3`: `0` folded voxels, `ICE p95 < 0.009 mm`, Landmark TRE reduced `1.24–1.55 mm` $\to$ `< 0.008 mm`, 90% coverage `82.5–94.8%` |
+| **Saltelli–Sobol' QMC & LKB / gEUD NTCP** | **PASS** | Overflow-safe gEUD ($n=0.05$ at 120 Gy), $\mathrm{TD}_{50} \to 50.0\%$ exact check, $0 \le S_1 \le S_T \le 1$ across 1,536 QMC draws; 2 new MCP tools verified |
+| **Hard Abstention & Safety Gates** | **PASS** | Verified `AbstentionError` on Jacobian folding ($J \le 0$ in any prior course $k$), excessive ICE ($>5\ \mathrm{mm}$), missing/mismatched `FrameOfReferenceUID`, and premature CNS recovery |
+| **Automated Test Suite (`pytest`) & CI/CD** | **PASS** | **29 / 29 tests passed (`0` warnings)**, 76% total coverage (87–100% across all core physics/DIR/DICOM/cohort/Sobol modules); GitHub Actions CI configured for Python 3.11 & 3.12 |
 | **Static Code Quality (`ruff`)** | **PASS** | **0 lint errors** across `src/`, `tests/`, and `scripts/` |
-| **Publication Figure Visual Audit** | **PASS** | All 5 figures (300-DPI PNG + PDF) visually inspected; overlaps eliminated; radiological orientation, scalebars, and provenance footers verified |
-| **Copyright, Licensing & Plagiarism Audit** | **PASS** | Real public clinical data (`OpenKBP pt_1`, CC BY 4.0 / MIT) preserved verbatim with SHA-256 `MANIFEST.json`, upstream `LICENSE`, `CITATION.cff`, and 10 peer-reviewed DOIs |
+| **Publication Figure Visual Audit** | **PASS** | All 7 figures (300-DPI PNG + PDF) visually inspected; zero overlaps; radiological orientation, scalebars, and provenance footers verified |
+| **Copyright, Licensing & Plagiarism Audit** | **PASS** | Public OpenKBP cohort (`pt_1`, `pt_2`, `pt_3`; CC BY 4.0 / MIT) preserved verbatim with per-patient SHA-256 `MANIFEST.json`, upstream `LICENSE`, `CITATION.cff`, and 15 verified peer-reviewed DOIs |
 
 ---
 

@@ -6,11 +6,12 @@
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-2E7D32?style=flat-square)](LICENSE)
-[![Tests: 22/22 Passing](https://img.shields.io/badge/Tests-22%2F22%20Passing-009E73?style=flat-square&logo=pytest&logoColor=white)](tests/)
+[![Tests: 29/29 Passing](https://img.shields.io/badge/Tests-29%2F29%20Passing-009E73?style=flat-square&logo=pytest&logoColor=white)](tests/)
+[![CI: GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
 [![Ruff: 0 Errors](https://img.shields.io/badge/Lint-Ruff%20Clean-0072B2?style=flat-square)](pyproject.toml)
 [![Inverse Residual: 2.84e-14 Gy](https://img.shields.io/badge/Inverse%20Residual-2.84e--14%20Gy-6A1B9A?style=flat-square)](docs/AUDIT_REPORT.md)
-[![MCP: JSON-RPC 2.0](https://img.shields.io/badge/Agent%20Harness-MCP%20Stdio-D55E00?style=flat-square)](src/reirt_biobudget/harness/mcp_server.py)
-[![Data: OpenKBP CC BY 4.0](https://img.shields.io/badge/Benchmark%20Data-OpenKBP%20(CC%20BY%204.0)-546E7A?style=flat-square)](DATA_SOURCES_AND_CITATIONS.md)
+[![MCP: 7 Tools](https://img.shields.io/badge/Agent%20Harness-MCP%207%20Tools-D55E00?style=flat-square)](src/reirt_biobudget/harness/mcp_server.py)
+[![Data: OpenKBP CC BY 4.0](https://img.shields.io/badge/Cohort%20Data-OpenKBP%20pt__1..3%20(CC%20BY%204.0)-546E7A?style=flat-square)](DATA_SOURCES_AND_CITATIONS.md)
 
 <br>
 
@@ -90,9 +91,12 @@ flowchart LR
 | :--- | :--- | :--- |
 | [`radiobiology.py`](src/reirt_biobudget/radiobiology.py) | Vectorized forward & **closed-form analytical inverse** across **LQ**, **$C^1$ LQL**, **Lea–Catcheside $G(\mu T)+h_m$**, and **McNamara variable proton RBE ($\mathrm{LET}_d$)** | Citardauq numerical stability; verified round-trip residual **`2.84e-14 Gy`** |
 | [`dir_envelope.py`](src/reirt_biobudget/dir_envelope.py) | Scaling-and-squaring SVF diffeomorphisms, physical-mm $J(\mathbf{x})$ & ICE forensics, positivity-preserving trilinear dose warping, TRE-calibrated 3D envelopes | Strict quantile monotonicity $p_{05} \le p_{50} \le p_{95} \le \mathrm{worst}$; **0 folded voxels** |
-| [`budget_solver.py`](src/reirt_biobudget/budget_solver.py) | Voxel-wise 3D Course-2 remaining physical dose ceiling $D_{\mathrm{rem}}(\mathbf{x})$, overlapping-OAR strict `min`, ESTRO/EORTC Type 1/2 classifier | Independent forward re-evaluation of every inverted budget voxel |
+| [`budget_solver.py`](src/reirt_biobudget/budget_solver.py) | Arbitrary **$K \ge 1$ multi-prior-course** exact paired ensemble accumulation, 3D Course-$(K+1)$ remaining ceiling $D_{\mathrm{rem}}(\mathbf{x})$, strict overlapping-OAR `min`, ESTRO/EORTC Type 1/2 classifier | Independent forward re-evaluation of every inverted budget voxel (`2.84e-14 Gy`) |
+| [`dicom_io.py`](src/reirt_biobudget/dicom_io.py) | Clinical DICOM-RT interoperability: **Deformable Spatial Registration (`REG`, `1.2.840.10008.5.1.4.1.1.66.3`)** reader/writer, **TPS-importable `RTDOSE`** budget export, and **closed-planar `RTSTRUCT`** iso-ceiling shells | Full lossless write $\to$ read round-trip verified (`< 0.005 Gy` quantization, `< 1e-5 mm` DVF error) |
+| [`ntcp_sobol.py`](src/reirt_biobudget/ntcp_sobol.py) | Overflow-safe **LKB / gEUD cumulative NTCP with 90% CIs** (Lyman 1985; Burman 1991; QUANTEC) + **Saltelli–Jansen QMC global Sobol' sensitivity** ($S_1$, $S_T$, interaction $S_T - S_1$) | Closed-form $\mathrm{TD}_{50} \to 50.0\%$ identity; $0 \le S_1 \le S_T \le 1$ verified across 1,536 QMC draws |
+| [`cohort.py`](src/reirt_biobudget/cohort.py) | Multi-patient OpenKBP cohort benchmark (`pt_1`–`pt_3`), **AAPM TG-132 anatomical landmark TRE** validation, and **empirical 90% envelope coverage** stress testing | Pre-DIR `1.24–1.55 mm` $\to$ Post-DIR `< 0.008 mm`; `82.5–94.8%` calibrated 90% coverage |
 | [`provenance.py`](src/reirt_biobudget/provenance.py) | SHA-256 checksums over every 3D volume, DVF, and Pydantic spec + hard `AbstentionError` gate | Refuses execution on $J \le 0$, $\mathrm{ICE}_{p95} > 5\ \mathrm{mm}$, or missing/mismatched `FrameOfReferenceUID` |
-| [`agent_orchestrator.py`](src/reirt_biobudget/harness/agent_orchestrator.py) & [`mcp_server.py`](src/reirt_biobudget/harness/mcp_server.py) | 4-axis adversarial assumption sweep, 2D safety phase diagram, 6-schedule co-design matrix, independent Critic-Verifier, JSON-RPC 2.0 MCP server | Every numeric dossier claim cross-checked against engine ledger before emission |
+| [`agent_orchestrator.py`](src/reirt_biobudget/harness/agent_orchestrator.py) & [`mcp_server.py`](src/reirt_biobudget/harness/mcp_server.py) | 4-axis adversarial sweep, 2D safety phase diagram, 6-schedule co-design matrix, Critic-Verifier, **JSON-RPC 2.0 MCP server (7 tools)** | Every numeric dossier claim cross-checked against engine ledger before emission |
 
 ---
 
@@ -106,8 +110,10 @@ Evaluated end-to-end on real de-identified clinical head-and-neck IMRT anatomy a
 | **AAPM TG-132 Jacobian Determinant $J(\mathbf{x})$** | `[0.978, 1.163]` (`0` folded) | $J(\mathbf{x}) > 0$ everywhere | PASS |
 | **AAPM TG-132 Inverse-Consistency Error ($\mathrm{ICE}_{p95}$)** | `0.0082 mm` (`8.2 μm`) | $\le 2.0\ \mathrm{mm}$ | PASS |
 | **Independent Critic-Verifier Audit** | `0` discrepancies | All invariants verified | PASS |
-| **Automated Test Suite (`pytest`) & Linter (`ruff`)** | `22 / 22` passed · `0` lint errors | 100% pass | PASS |
-| **Key Clinical Finding (`SpinalCord` / `Brainstem`)** | DIR TRE swings `10.6` / `13.6 Gy` | Outstrips $\alpha/\beta$ & recovery | Surfaced automatically |
+| **Automated Test Suite (`pytest`) & Linter (`ruff`)** | `29 / 29` passed (`0` warnings) · `0` lint errors | 100% pass (CI Py 3.11 & 3.12) | PASS |
+| **3-Patient OpenKBP Cohort Landmark TRE (`pt_1`–`pt_3`)** | Pre `1.24–1.55 mm` $\to$ Post `< 0.008 mm` | AAPM TG-132 $\le 2.0\ \mathrm{mm}$ | PASS |
+| **Empirical 90% DIR-Envelope Coverage (`pt_1`–`pt_3`)** | `82.5%` · `86.2%` · `94.8%` | Nominal `90%` band | Calibrated |
+| **Saltelli–Sobol' Global Variance (`SpinalCord` / `Brainstem`)** | DIR $S_T = 0.72$ / $0.59$ (vs. Mandible Recov. $S_T = 0.99$) | Joint 4D QMC (1,536 evals) | Quantified |
 
 ---
 
@@ -145,6 +151,18 @@ All figures are rendered at **300 DPI** (PNG + vector PDF) in radiological orien
 
 ---
 
+### 6. Multi-Patient OpenKBP Cohort: Landmark TRE, Envelope Calibration & $K=2$ Multi-Course Accumulation
+![Figure 6: Multi-patient OpenKBP cohort landmark TRE validation, 90% envelope calibration, and K=2 multi-course headroom](outputs/figures/fig6_cohort_landmark_validation.png)
+*(a) Pre-DIR vs. Post-DIR anatomical landmark TRE across `pt_1`, `pt_2`, and `pt_3` (11–16 anatomical landmarks per patient). (b) Empirical 90% DIR-uncertainty envelope coverage across high-gradient OAR voxels under independent registration perturbations. (c) Cross-patient safe remaining physical dose ceilings alongside a true $K=2$ heterogeneous prior-course benchmark (`54 Gy/27 fx IMRT` + `18 Gy/3 fx SBRT` $\to$ Course 3).*
+
+---
+
+### 7. Joint Saltelli–Sobol' Global Sensitivity & Cumulative LKB NTCP Risk Forest
+![Figure 7: Saltelli-Jansen global Sobol sensitivity indices and cumulative LKB NTCP risk forest plot with 90% CIs](outputs/figures/fig7_sobol_ntcp_analysis.png)
+*(a) First-order ($S_1$, solid) and total-order ($S_T$, hatched, capturing nonlinear interactions) Sobol' global sensitivity indices across 4 joint uncertainty axes—quantitatively demonstrating that DIR spatial registration dominates variance in steep-gradient serial OARs (`SpinalCord` $S_T = 0.72$, `Brainstem` $S_T = 0.59$), whereas tissue recovery dominates plateau regions (`Bone_Mandible` $S_T = 0.99$). (b) Cumulative LKB / gEUD NTCP clinical complication risk probabilities with 90% confidence intervals.*
+
+---
+
 ## Quickstart
 
 ```bash
@@ -154,13 +172,16 @@ cd reirt-biobudget
 uv venv --python 3.12 .venv
 uv pip install --python .venv/bin/python -e ".[dev]"
 
-# 2. Run the full 3D engine + Frontier Agent Harness + 5 academic figures (~15 s on CPU)
-.venv/bin/reirt-biobudget run --patient-dir data/openkbp/pt_1 --out-dir outputs
+# 2. Run single-patient 3D engine + Frontier Agent Harness + 5 figures + optional clinical DICOM export
+.venv/bin/reirt-biobudget run --patient-dir data/openkbp/pt_1 --export-dicom --out-dir outputs
 
-# 3. Inspect any OAR's AAPM TG-263 normalization & sourced clinical constraints
+# 3. Run 3-patient OpenKBP cohort + landmark TRE + K=2 multi-course + Saltelli-Sobol + LKB NTCP (Figs 6-7)
+.venv/bin/reirt-biobudget cohort --data-root data/openkbp --out-dir outputs
+
+# 4. Inspect any OAR's AAPM TG-263 normalization & sourced clinical constraints
 .venv/bin/reirt-biobudget lookup spinal_cord
 
-# 4. Run the full unit, DICOM-RT, abstention, and MCP audit suite
+# 5. Run the full unit, K-course, DICOM REG/RTDOSE/RTSTRUCT, Sobol/NTCP, abstention & MCP audit suite
 .venv/bin/pytest -v tests/
 ```
 

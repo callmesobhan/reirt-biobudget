@@ -40,6 +40,26 @@ class DIREnvelopeResult:
     ice_map_mm: Volume3D
     dvf_mm: np.ndarray  # shape (3, Z, Y, X) in mm: (uz, uy, ux)
     quality: DIRQualityMetrics
+    ensemble_samples_sub: np.ndarray | None = None  # optional (M, sz, sy, sx) float32
+    ensemble_bbox: tuple[slice, slice, slice] | None = None
+
+    def extract_masked_ensemble(self, mask: np.ndarray) -> np.ndarray:
+        """Return (M, N_mask) float64 ensemble dose samples inside a 3D boolean mask."""
+        if self.ensemble_samples_sub is None or self.ensemble_bbox is None:
+            return self.dose_nominal.data[mask][np.newaxis, :]
+        sz, sy, sx = self.ensemble_bbox
+        # Full-volume scatter only inside mask indices for exact alignment
+        sub_mask = mask[sz, sy, sx]
+        m_count = self.ensemble_samples_sub.shape[0]
+        if int(np.sum(sub_mask)) == int(np.sum(mask)):
+            return self.ensemble_samples_sub[:, sub_mask].astype(np.float64)
+        # Fallback if mask extends slightly outside active bbox
+        out = np.repeat(self.dose_nominal.data[mask][np.newaxis, :], m_count, axis=0)
+        full_sub = np.zeros(mask.shape, dtype=bool)
+        full_sub[sz, sy, sx] = sub_mask
+        in_bbox_mask_idx = full_sub[mask]
+        out[:, in_bbox_mask_idx] = self.ensemble_samples_sub[:, sub_mask].astype(np.float64)
+        return out
 
 
 def _base_grid(shape: tuple[int, int, int]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -300,6 +320,7 @@ def compute_dir_dose_envelope(
     correlation_mm: float = 18.0,
     seed: int = 42,
     tg132_ice_threshold_mm: float = 2.0,
+    return_samples: bool = False,
 ) -> DIREnvelopeResult:
     """Compute the 3D voxel-wise DIR-uncertainty dose envelope on the Course-2 grid.
 
@@ -343,8 +364,14 @@ def compute_dir_dose_envelope(
         0.0,
     )
 
+    samples_out: np.ndarray | None = None
+    bbox_out: tuple[slice, slice, slice] | None = None
+
     if tre_sigma_mm == 0.0 or n_ensemble == 1:
         p05 = p50 = p95 = worst = nominal_warped.copy()
+        if return_samples:
+            samples_out = nominal_warped[np.newaxis, ...].astype(np.float32)
+            bbox_out = (slice(0, shape[0]), slice(0, shape[1]), slice(0, shape[2]))
     else:
         rng = np.random.default_rng(seed)
         # Restrict ensemble evaluation to active non-zero/body bounding box for speed
@@ -396,6 +423,9 @@ def compute_dir_dose_envelope(
         p50[sl_z, sl_y, sl_x] = np.percentile(samples, 50, axis=0)
         p95[sl_z, sl_y, sl_x] = np.percentile(samples, 95, axis=0)
         worst[sl_z, sl_y, sl_x] = np.max(samples, axis=0)
+        if return_samples:
+            samples_out = samples
+            bbox_out = (sl_z, sl_y, sl_x)
 
     spread_90 = np.maximum(p95 - p05, 0.0)
 
@@ -420,4 +450,6 @@ def compute_dir_dose_envelope(
         ice_map_mm=_wrap(ice, "dir_ice_mm", units="mm"),
         dvf_mm=nominal_dvf_mm,
         quality=quality,
+        ensemble_samples_sub=samples_out,
+        ensemble_bbox=bbox_out,
     )

@@ -12,7 +12,7 @@
         "n_fractions": 35,
         "prescription_gy": 70.0,
         "months_before_reirt": 18.0,
-        "frame_of_reference_uid": "1.2.826.0.1.3680043.8.498.OPENKBP.pt_1.COURSE1",
+        "frame_of_reference_uid": "1.2.826.0.1.3680043.8.498.2021.1.1",
         "d_t_gy": null,
         "fraction_duration_h": 0.0,
         "fractions_per_day": 1,
@@ -30,7 +30,7 @@
       "n_fractions": 5,
       "prescription_gy": 35.0,
       "months_before_reirt": 0.0,
-      "frame_of_reference_uid": "1.2.826.0.1.3680043.8.498.OPENKBP.pt_1.COURSE2",
+      "frame_of_reference_uid": "1.2.826.0.1.3680043.8.498.2021.1.2",
       "d_t_gy": null,
       "fraction_duration_h": 0.0,
       "fractions_per_day": 1,
@@ -59,6 +59,28 @@
         "Diffeomorphic DVF verified (min J=0.978 > 0, ICE p95=0.008 mm <= 2.0 mm)."
       ]
     },
+    "per_course_dir_quality": [
+      {
+        "jacobian_min": 0.9783811196071536,
+        "jacobian_p01": 0.9814235883304852,
+        "jacobian_median": 1.0116728068990315,
+        "jacobian_p99": 1.1436355743129538,
+        "jacobian_max": 1.1625141167026718,
+        "folded_voxel_count": 0,
+        "folded_voxel_fraction": 0.0,
+        "ice_mean_mm": 0.003192660175744066,
+        "ice_p95_mm": 0.008232577625259741,
+        "ice_max_mm": 0.00981843065598713,
+        "disp_mean_mm": 1.490609964860303,
+        "disp_max_mm": 3.0107125099039957,
+        "ensemble_tre_sigma_mm": 2.5,
+        "ensemble_size": 24,
+        "tg132_pass": true,
+        "notes": [
+          "Diffeomorphic DVF verified (min J=0.978 > 0, ICE p95=0.008 mm <= 2.0 mm)."
+        ]
+      }
+    ],
     "oar_summaries": [
       {
         "tg263_name": "Brainstem",
@@ -197,18 +219,18 @@
       }
     ],
     "provenance": {
-      "engine_version": "0.1.0",
-      "timestamp_utc": "2026-11-21T19:35:32.912257+00:00",
+      "engine_version": "0.2.0",
+      "timestamp_utc": "2026-11-21T22:38:58.204746+00:00",
       "case_id": "OPENKBP-PT_1-REIRT",
       "dataset_source": "OpenKBP public clinical dataset (pt_1)",
       "dataset_citation": "Babier A, Zhang B, Mahmood R, Moore KL, Purdie TG, McNiven AL, Chan TCY. OpenKBP: The open-access knowledge-based planning grand challenge and dataset. Medical Physics. 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",
       "dataset_license": "CC BY 4.0 (dataset) / MIT (repository code)",
       "input_checksums": {
-        "prior_course_spec": "cd27d76b89a2a7ef46d221f83d9755eb4d427b25e1439893da39a590f8e06565",
-        "planned_course_spec": "8ba7cb8bcb48021b49526c72d94f9572a7a7049960b09072ac67889eb03b8c16",
-        "prior_dose_3d": "2b55a82349c832f4b5a25aa54956cdf6a31b252ca483c6528afe67d3034118cb",
+        "planned_course_spec": "d5aa03af784bd0197c12712b2ebd8242de50967b137dd7e8db8986ebe4cfec71",
+        "prior_course_spec": "f6865a902fd36a65de32c51b7ae83907aa108f77fa9a72dc00cde3cd52b81158",
+        "prior_dose_3d": "b98fe094eacaa26c7a553319b62b78907675854a2b6742d988bec2b26b63b01b",
         "nominal_dvf_3d": "e3498d7f6c0fa9b2cfc037e6e88108e78c8b77dcfd275a0961723fec0680f18a",
-        "candidate_course2_dose_3d": "727738b8c7e3a87288f862c824e55dfb42eb49714d7315e7038cb8c031726053"
+        "candidate_course2_dose_3d": "6c0669225f3098f8bef0f97990ca6e5b9f3a41ce808fac34530083f89785795b"
       },
       "invariants_checked": [
         "COURSE_FRAME_OF_REFERENCE_UID_PRESENT",

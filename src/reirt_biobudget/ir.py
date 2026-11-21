@@ -279,6 +279,71 @@ class ReIrradiationResult(BaseModel):
     prior_courses: list[CourseSpec]
     planned_course: CourseSpec
     dir_quality: DIRQualityMetrics
+    per_course_dir_quality: list[DIRQualityMetrics] = Field(default_factory=list)
     oar_summaries: list[OARBudgetSummary]
     provenance: ProvenanceRecord
     warnings: list[str] = Field(default_factory=list)
+
+
+@dataclass
+class PriorCourseInput:
+    """Bundled prior radiotherapy course volume, DVF, and registration uncertainty for K-course solving."""
+
+    course: CourseSpec
+    dose: Volume3D
+    nominal_dvf_mm: np.ndarray
+    nominal_inv_dvf_mm: np.ndarray | None = None
+    tre_sigma_mm: float = 2.5
+    let_d: Volume3D | None = None
+    recovery_overrides: dict[str, float] | None = None
+
+
+class LKBModelSpec(BaseModel):
+    """Sourced Lyman-Kutcher-Burman (LKB) / gEUD Normal Tissue Complication Probability parameters."""
+
+    tg263_name: str
+    endpoint: str
+    td50_gy: float = Field(..., gt=0.0)
+    m: float = Field(..., gt=0.0, le=2.0)
+    n: float = Field(..., gt=0.0, le=2.0)
+    citation: str
+    doi: str
+
+
+class OARNTCPSummary(BaseModel):
+    """Cumulative gEUD and LKB NTCP probability with 90% joint uncertainty confidence interval."""
+
+    tg263_name: str
+    endpoint: str
+    geud_p05_gy: float
+    geud_nominal_gy: float
+    geud_p95_gy: float
+    ntcp_p05_pct: float
+    ntcp_nominal_pct: float
+    ntcp_p95_pct: float
+    ntcp_worst_pct: float
+    td50_gy: float
+    m: float
+    n: float
+    citation: str
+    doi: str
+
+
+class SobolSensitivityResult(BaseModel):
+    """First-order (S_i), total-order (S_Ti), and interaction (S_Ti - S_i) Sobol indices."""
+
+    oar_name: str
+    output_metric: str
+    n_base_samples: int
+    total_evaluations: int
+    parameter_names: list[str]
+    first_order_s1: dict[str, float]
+    total_order_st: dict[str, float]
+    interaction_st_minus_s1: dict[str, float]
+    output_mean: float
+    output_std: float
+    output_p05: float
+    output_p50: float
+    output_p95: float
+    dominant_parameter: str
+

@@ -1,0 +1,56 @@
+name: CI Verification & Physics Invariant Audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package and dev tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Static Lint Audit (Ruff)
+        run: ruff check src tests scripts
+
+      - name: Run Verification & Audit Test Suite with Coverage
+        run: pytest -v --cov=reirt_biobudget --cov-report=term-missing --cov-fail-under=75 tests/
+
+      - name: Golden Physics Invariant Gate (OpenKBP pt_1)
+        run: |
+          python -c "
+          from reirt_biobudget.io_loaders import load_openkbp_patient, build_reirradiation_benchmark_from_openkbp
+          from reirt_biobudget.budget_solver import solve_reirradiation_budget
+          p = load_openkbp_patient('data/openkbp/pt_1')
+          case = build_reirradiation_benchmark_from_openkbp(p)
+          out = solve_reirradiation_budget(
+              case_id=case.case_id, prior_course=case.prior_course, prior_dose=case.prior_dose_course1,
+              planned_course=case.planned_course, nominal_dvf_mm=case.nominal_dvf_mm,
+              nominal_inv_dvf_mm=case.nominal_inv_dvf_mm, oar_masks_course2=case.oar_masks_course2,
+              body_mask_course2=case.body_mask_course2, candidate_course2_dose=case.candidate_dose_course2,
+              tre_sigma_mm=2.5, n_ensemble=12, seed=42
+          )
+          assert out.result.provenance.all_invariants_passed
+          assert out.result.provenance.max_inverse_residual_gy < 1e-10
+          assert out.result.dir_quality.folded_voxel_count == 0
+          assert out.result.dir_quality.ice_p95_mm < 0.05
+          print('Golden Physics Invariant Gate: PASS')
+          "

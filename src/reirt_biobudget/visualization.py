@@ -24,8 +24,10 @@ import numpy as np
 from matplotlib.gridspec import GridSpec
 
 from reirt_biobudget.budget_solver import compute_dvh_curve
+from reirt_biobudget.cohort import CohortBenchmarkResult
 from reirt_biobudget.harness.agent_orchestrator import AdversarialSweepReport
 from reirt_biobudget.io_loaders import ReIrradiationBenchmarkCase
+from reirt_biobudget.ir import OARNTCPSummary, SobolSensitivityResult
 
 # Okabe-Ito / NPG colorblind-safe publication palette
 OAR_COLORS: dict[str, str] = {
@@ -835,12 +837,300 @@ def plot_fig5_tg132_dir_forensics(
     return png_path
 
 
+def plot_fig6_cohort_landmark_validation(
+    cohort: CohortBenchmarkResult,
+    out_dir: Path,
+) -> Path:
+    """Figure 6: Multi-Patient OpenKBP Cohort TRE Validation, 90% Coverage & K=2 Headroom."""
+    _configure_academic_style()
+    pats = cohort.patients
+    pat_labels = [p.patient_id.upper() for p in pats]
+
+    fig = plt.figure(figsize=(14.8, 5.4))
+    gs = GridSpec(1, 3, figure=fig, width_ratios=[1.05, 1.0, 1.25], wspace=0.34, top=0.76, bottom=0.17)
+
+    # Panel (a): Pre-DIR vs Post-DIR Anatomical Landmark TRE (mm)
+    ax1 = fig.add_subplot(gs[0, 0])
+    x = np.arange(len(pats))
+    w = 0.34
+    pre_mean = [p.landmark_validation.pre_dir_tre_mean_mm for p in pats]
+    pre_p95 = [p.landmark_validation.pre_dir_tre_p95_mm for p in pats]
+    post_p95 = [p.landmark_validation.post_dir_tre_p95_mm for p in pats]
+
+    b1 = ax1.bar(x - w / 2, pre_mean, width=w * 0.9, color="#D55E00", alpha=0.86, label="Pre-DIR Mean TRE")
+    b2 = ax1.bar(x + w / 2, pre_p95, width=w * 0.9, color="#E69F00", alpha=0.86, label="Pre-DIR p95 TRE")
+    ax1.bar(x + w / 2, post_p95, width=w * 0.9, color="#009E73", label="Post-DIR p95 TRE")
+    ax1.axhline(2.0, color="#111111", linestyle="--", linewidth=1.2, label="AAPM TG-132 (2.0 mm)")
+
+    for bar_obj, val in zip(b1, pre_mean):
+        ax1.text(bar_obj.get_x() + bar_obj.get_width() / 2, val + 0.12, f"{val:.1f}", ha="center", va="bottom", fontsize=7.2)
+    for bar_obj, val, pval in zip(b2, pre_p95, post_p95):
+        ax1.text(bar_obj.get_x() + bar_obj.get_width() / 2, val + 0.12, f"{val:.1f}", ha="center", va="bottom", fontsize=7.2)
+        ax1.text(
+            bar_obj.get_x() + bar_obj.get_width() / 2,
+            0.22,
+            f"<{max(pval, 0.01):.2f}",
+            ha="center",
+            va="bottom",
+            fontsize=6.8,
+            fontweight="bold",
+            color="#00695C",
+        )
+
+    ax1.set_xticks(x)
+    ax1.set_xticklabels([f"{lbl}\n(n={p.landmark_validation.n_landmarks} LM)" for lbl, p in zip(pat_labels, pats)], fontsize=7.8)
+    ax1.set_ylim(0, max(max(pre_p95) * 1.25, 4.5))
+    ax1.set_ylabel("Anatomical Landmark TRE (mm)", fontweight="bold")
+    ax1.set_title("Pre- vs. Post-DIR Landmark TRE", pad=38)
+    ax1.grid(True, axis="y", linestyle="--", alpha=0.25)
+    ax1.spines["top"].set_visible(False)
+    ax1.spines["right"].set_visible(False)
+    ax1.legend(loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=2, fontsize=6.7, columnspacing=0.8)
+    _add_panel_label(ax1, "a")
+
+    # Panel (b): Empirical 90% DIR Envelope Calibration across Patients
+    ax2 = fig.add_subplot(gs[0, 1])
+    y = np.arange(len(pats))
+    covs = [p.landmark_validation.empirical_90pct_envelope_coverage_pct for p in pats]
+    ax2.axvspan(85.0, 95.0, color="#E8F5E9", alpha=0.85, label="Target Calibration [85–95%]")
+    ax2.axvline(90.0, color="#2E7D32", linestyle="--", linewidth=1.4, label="Nominal 90% Target")
+    ax2.barh(y, covs, height=0.48, color="#0072B2", alpha=0.88, edgecolor="white")
+    for i, (cval, p) in enumerate(zip(covs, pats)):
+        ax2.text(
+            min(cval + 1.0, 101.0),
+            i,
+            f"{cval:.1f}%\n({p.landmark_validation.gradient_voxels_tested:,} vox)",
+            va="center",
+            ha="left",
+            fontsize=7.3,
+            fontweight="bold",
+            color="#0D47A1",
+        )
+    ax2.set_yticks(y)
+    ax2.set_yticklabels(pat_labels, fontsize=8.2, fontweight="bold")
+    ax2.invert_yaxis()
+    ax2.set_xlim(0, 122.0)
+    ax2.set_xlabel("Empirical 90% Envelope Coverage (%)", fontweight="bold")
+    ax2.set_title("DIR-Envelope Calibration Stress Test", pad=38)
+    ax2.grid(True, axis="x", linestyle="--", alpha=0.25)
+    ax2.spines["top"].set_visible(False)
+    ax2.spines["right"].set_visible(False)
+    ax2.legend(loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=1, fontsize=7.0)
+    _add_panel_label(ax2, "b")
+
+    # Panel (c): Cross-Patient Remaining Physical Dose Ceiling + K=2 Multi-Course Comparison
+    ax3 = fig.add_subplot(gs[0, 2])
+    col_labels = [*pat_labels]
+    sc_vals = [p.remaining_physical_p95_gy.get("SpinalCord", 0.0) for p in pats]
+    bs_vals = [p.remaining_physical_p95_gy.get("Brainstem", 0.0) for p in pats]
+    md_vals = [p.remaining_physical_p95_gy.get("Bone_Mandible", 0.0) for p in pats]
+
+    if cohort.k2_multicourse_output is not None:
+        col_labels.append("PT_1\n(K=2 Prior)")
+        k2_map = {s.tg263_name: s.remaining_physical_p95_gy for s in cohort.k2_multicourse_output.result.oar_summaries}
+        sc_vals.append(k2_map.get("SpinalCord", 0.0))
+        bs_vals.append(k2_map.get("Brainstem", 0.0))
+        md_vals.append(k2_map.get("Bone_Mandible", 0.0))
+
+    xc = np.arange(len(col_labels))
+    wc = 0.25
+    for oi, (oar, vals) in enumerate([("SpinalCord", sc_vals), ("Brainstem", bs_vals), ("Bone_Mandible", md_vals)]):
+        bars = ax3.bar(
+            xc + (oi - 1) * wc,
+            vals,
+            width=wc * 0.92,
+            color=OAR_COLORS[oar],
+            label=oar,
+            edgecolor="white",
+        )
+        for b, v in zip(bars, vals):
+            if v > 0:
+                ax3.text(b.get_x() + b.get_width() / 2, v + 0.5, f"{v:.1f}", ha="center", va="bottom", fontsize=7.0)
+
+    ax3.set_xticks(xc)
+    ax3.set_xticklabels(col_labels, fontsize=7.8, fontweight="bold")
+    ax3.set_ylim(0, max(max(sc_vals), max(bs_vals), max(md_vals), 25.0) * 1.24)
+    ax3.set_ylabel("Remaining Physical Ceiling p95 (Gy)", fontweight="bold")
+    ax3.set_title("Cohort & K=2 Multi-Course Headroom", pad=38)
+    ax3.grid(True, axis="y", linestyle="--", alpha=0.25)
+    ax3.spines["top"].set_visible(False)
+    ax3.spines["right"].set_visible(False)
+    ax3.legend(loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=3, fontsize=7.2, columnspacing=0.8)
+    _add_panel_label(ax3, "c")
+
+    fig.suptitle(
+        "Multi-Patient OpenKBP Cohort Benchmark: Landmark TRE, Envelope Calibration & K-Course Accumulation",
+        fontsize=11.6,
+        fontweight="bold",
+        y=0.985,
+    )
+    footer = (
+        "Source data: OpenKBP public clinical dataset (pt_1, pt_2, pt_3; Babier et al., Med Phys 2021, "
+        "DOI: 10.1002/mp.14845, CC BY 4.0). Research tool — not a medical device."
+    )
+    fig.text(0.5, 0.02, footer, ha="center", fontsize=7.2, color="#555555", style="italic")
+
+    png_path = out_dir / "fig6_cohort_landmark_validation.png"
+    fig.savefig(png_path, dpi=300)
+    fig.savefig(out_dir / "fig6_cohort_landmark_validation.pdf")
+    plt.close(fig)
+    return png_path
+
+
+def plot_fig7_sobol_ntcp_analysis(
+    sobol_results: list[SobolSensitivityResult],
+    ntcp_summaries: list[OARNTCPSummary],
+    out_dir: Path,
+) -> Path:
+    """Figure 7: Saltelli-Sobol Global Sensitivity (S1 vs ST) & LKB Cumulative NTCP 90% CIs."""
+    _configure_academic_style()
+
+    fig = plt.figure(figsize=(14.6, 5.7))
+    gs = GridSpec(1, 2, figure=fig, width_ratios=[1.15, 1.05], wspace=0.36, top=0.76, bottom=0.16)
+
+    # Panel (a): Grouped First-Order (S1) vs Total-Order (ST) Sobol Indices across OARs
+    ax1 = fig.add_subplot(gs[0, 0])
+    param_short = {
+        "DIR Spatial Registration": "DIR Spatial\nRegistration",
+        "Tissue Recovery Credit": "Tissue\nRecovery",
+        "Radiobiology alpha/beta": "Radiobiology\nalpha/beta",
+        "Course-2 High-Dose Regime": "High-Dose\nRegime",
+    }
+    pnames = sobol_results[0].parameter_names
+    x = np.arange(len(pnames))
+    n_oars = len(sobol_results)
+    group_w = 0.74 / max(n_oars, 1)
+
+    for oi, sr in enumerate(sobol_results):
+        col = OAR_COLORS.get(sr.oar_name, "#555555")
+        offset = (oi - (n_oars - 1) / 2.0) * group_w
+        s1_vals = [sr.first_order_s1[p] for p in pnames]
+        st_vals = [sr.total_order_st[p] for p in pnames]
+        # Total-order ST backdrop (lighter hatched) + First-order S1 foreground (solid)
+        ax1.bar(
+            x + offset,
+            st_vals,
+            width=group_w * 0.88,
+            color=col,
+            alpha=0.28,
+            edgecolor=col,
+            linewidth=1.0,
+            hatch="///",
+        )
+        bars = ax1.bar(
+            x + offset,
+            s1_vals,
+            width=group_w * 0.88,
+            color=col,
+            alpha=0.90,
+            edgecolor="white",
+            linewidth=0.5,
+            label=sr.oar_name,
+        )
+        for b, st_v in zip(bars, st_vals):
+            if st_v >= 0.04:
+                ax1.text(
+                    b.get_x() + b.get_width() / 2,
+                    st_v + 0.02,
+                    f"{st_v:.2f}",
+                    ha="center",
+                    va="bottom",
+                    fontsize=6.8,
+                    color=col,
+                    fontweight="bold",
+                )
+
+    ax1.set_xticks(x)
+    ax1.set_xticklabels([param_short.get(p, p) for p in pnames], fontsize=7.8)
+    ax1.set_ylim(0, 1.12)
+    ax1.set_ylabel("Sobol' Variance Fraction ($S_1$ Solid, $S_T$ Hatched)", fontweight="bold")
+    ax1.set_title("Saltelli–Jansen Global Sobol' Sensitivity Indices", pad=40)
+    ax1.grid(True, axis="y", linestyle="--", alpha=0.25)
+    ax1.spines["top"].set_visible(False)
+    ax1.spines["right"].set_visible(False)
+    handles, _ = ax1.get_legend_handles_labels()
+    handles.append(
+        mpatches.Patch(facecolor="#888888", alpha=0.28, edgecolor="#555555", hatch="///", label="Total-Order ST (w/ interactions)")
+    )
+    ax1.legend(handles=handles, loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=2, fontsize=7.1)
+    _add_panel_label(ax1, "a")
+
+    # Panel (b): Cumulative LKB / gEUD NTCP Risk Forest Plot with 90% Uncertainty CIs
+    ax2 = fig.add_subplot(gs[0, 1])
+    y = np.arange(len(ntcp_summaries))
+    ax2.axvline(5.0, color="#2E7D32", linestyle="--", linewidth=1.2, label="5% Clinical Risk Ref.")
+    ax2.axvline(15.0, color="#C62828", linestyle=":", linewidth=1.3, label="15% High-Risk Ref.")
+
+    for i, ns in enumerate(ntcp_summaries):
+        col = OAR_COLORS.get(ns.tg263_name, "#333333")
+        ax2.plot([ns.ntcp_p05_pct, ns.ntcp_p95_pct], [i, i], color=col, linewidth=3.0, alpha=0.85, zorder=4)
+        ax2.scatter([ns.ntcp_nominal_pct], [i], color=col, edgecolor="#111111", s=58, marker="D", zorder=6)
+        ax2.scatter([ns.ntcp_worst_pct], [i], color="#B71C1C", s=34, marker="^", zorder=5)
+        ax2.text(
+            max(ns.ntcp_worst_pct, ns.ntcp_p95_pct) + 1.8,
+            i,
+            f"{ns.ntcp_nominal_pct:.1f}% [{ns.ntcp_p05_pct:.1f}–{ns.ntcp_p95_pct:.1f}%]",
+            va="center",
+            ha="left",
+            fontsize=7.5,
+            fontweight="bold",
+            color="#222222",
+        )
+
+    ax2.set_yticks(y)
+    ax2.set_yticklabels(
+        [f"{ns.tg263_name}\n({ns.endpoint.split(' (')[0]})" for ns in ntcp_summaries],
+        fontsize=7.8,
+    )
+    ax2.invert_yaxis()
+    max_risk = max((ns.ntcp_worst_pct for ns in ntcp_summaries), default=30.0)
+    ax2.set_xlim(-2.0, min(max(max_risk + 28.0, 45.0), 128.0))
+    ax2.set_xlabel("Cumulative LKB NTCP Risk Probability (%)", fontweight="bold")
+    ax2.set_title("Cumulative LKB / gEUD NTCP with 90% Uncertainty CIs", pad=40)
+    ax2.grid(True, axis="x", linestyle="--", alpha=0.25)
+    ax2.spines["top"].set_visible(False)
+    ax2.spines["right"].set_visible(False)
+
+    f_handles = [
+        plt.Line2D([0], [0], color="#333333", marker="D", linewidth=2.5, markersize=5.5, label="Nominal + 90% CI"),
+        plt.Line2D([0], [0], color="#B71C1C", marker="^", linestyle="none", markersize=5.5, label="Worst-case"),
+        plt.Line2D([0], [0], color="#2E7D32", linestyle="--", linewidth=1.2, label="5% Ref."),
+        plt.Line2D([0], [0], color="#C62828", linestyle=":", linewidth=1.3, label="15% Ref."),
+    ]
+    ax2.legend(handles=f_handles, loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=4, fontsize=6.8, columnspacing=0.8)
+    ax2.text(
+        0.97,
+        0.96,
+        "b",
+        transform=ax2.transAxes,
+        fontsize=11.5,
+        fontweight="bold",
+        va="top",
+        ha="right",
+        color="#111111",
+    )
+
+    fig.suptitle(
+        "Joint Global Variance Decomposition (Sobol' QMC) & Cumulative LKB Normal Tissue Complication Risk",
+        fontsize=11.6,
+        fontweight="bold",
+        y=0.985,
+    )
+    fig.text(0.5, 0.02, PROVENANCE_FOOTER, ha="center", fontsize=7.2, color="#555555", style="italic")
+
+    png_path = out_dir / "fig7_sobol_ntcp_analysis.png"
+    fig.savefig(png_path, dpi=300)
+    fig.savefig(out_dir / "fig7_sobol_ntcp_analysis.pdf")
+    plt.close(fig)
+    return png_path
+
+
 def generate_all_publication_figures(
     case: ReIrradiationBenchmarkCase,
     report: AdversarialSweepReport,
     out_dir: str | Path,
 ) -> list[Path]:
-    """Generate all 5 publication-grade academic figures (PNG + PDF) into `out_dir`."""
+    """Generate core 5 publication-grade academic figures (PNG + PDF) into `out_dir`."""
     dest = Path(out_dir)
     dest.mkdir(parents=True, exist_ok=True)
     return [

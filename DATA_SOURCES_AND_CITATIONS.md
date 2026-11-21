@@ -9,7 +9,7 @@ equation used in `reirt-biobudget` is explicitly cited below.
 ## 1. Public Clinical Benchmark Dataset
 
 ### OpenKBP (Open-Access Knowledge-Based Planning Grand Challenge Dataset)
-- **Files Used:** `data/openkbp/pt_1/` (de-identified head-and-neck IMRT 3D CT, clinical 3D dose distribution, voxel spacing, and contoured TG-263 OAR/PTV masks)
+- **Files Used:** `data/openkbp/pt_1/`, `data/openkbp/pt_2/`, `data/openkbp/pt_3/` (de-identified head-and-neck IMRT 3D CT, clinical 3D dose distributions, voxel spacing, and contoured TG-263 OAR/PTV masks)
 - **Authors:** Aaron Babier, Binghao Zhang, Rafid Mahmood, Kevin L. Moore, Thomas G. Purdie, Andrea L. McNiven, Timothy C. Y. Chan
 - **Publication:** *Medical Physics*, 2021;48(9):5549–5561
 - **DOI:** [`10.1002/mp.14845`](https://doi.org/10.1002/mp.14845)
@@ -62,3 +62,18 @@ equation used in `reirt-biobudget` is explicitly cited below.
    - Nieder C, Grosu AL, Andratschke NH, Molls M. *Update of human spinal cord reirradiation tolerance based on additional data from 38 patients.* Int J Radiat Oncol Biol Phys. 2006;66(5):1446–1449. DOI: [`10.1016/j.ijrobp.2006.07.1383`](https://doi.org/10.1016/j.ijrobp.2006.07.1383)
 10. **HyTEC Spinal Cord SBRT & Re-Irradiation Tolerance (2021):**
     Sahgal A, Chang JH, Ma L, et al. *Spinal Cord Dose Tolerance to Stereotactic Body Radiation Therapy.* Int J Radiat Oncol Biol Phys. 2021;110(1):124–136. DOI: [`10.1016/j.ijrobp.2019.09.038`](https://doi.org/10.1016/j.ijrobp.2019.09.038)
+
+---
+
+## 4. Normal Tissue Complication Probability (LKB / gEUD) & Global Sobol' Sensitivity
+
+11. **Lyman NTCP Model (1985):**
+    Lyman JT. *Complication probability as assessed from dose-volume histograms.* Radiat Res Suppl. 1985;8:S13–S19. DOI: [`10.2307/3583506`](https://doi.org/10.2307/3583506)
+12. **Burman–Kutcher–Emami LKB Parameter Fits (1991):**
+    Burman C, Kutcher GJ, Emami B, Goitein M. *Fitting of normal tissue tolerance data to an analytic function.* Int J Radiat Oncol Biol Phys. 1991;21(1):123–135. DOI: [`10.1016/0360-3016(91)90172-Z`](https://doi.org/10.1016/0360-3016(91)90172-Z)
+13. **QUANTEC Spinal Cord Dose–Volume Effects (2010):**
+    Kirkpatrick JP, van der Kogel AJ, Schultheiss TE. *Radiation dose-volume effects in the spinal cord.* Int J Radiat Oncol Biol Phys. 2010;76(3 Suppl):S42–S49. DOI: [`10.1016/j.ijrobp.2009.04.095`](https://doi.org/10.1016/j.ijrobp.2009.04.095)
+14. **QUANTEC Salivary Gland Dose–Volume Effects (2010):**
+    Deasy JO, Moiseenko V, Marks L, Chao KSC, Nam J, Eisbruch A. *Radiotherapy dose-volume effects on salivary gland function.* Int J Radiat Oncol Biol Phys. 2010;76(3 Suppl):S58–S63. DOI: [`10.1016/j.ijrobp.2009.06.090`](https://doi.org/10.1016/j.ijrobp.2009.06.090)
+15. **Saltelli–Jansen Global Variance-Based Sensitivity Analysis (2010):**
+    Saltelli A, Annoni P, Azzini I, Campolongo F, Ratto M, Tarantola S. *Variance based sensitivity analysis of model output. Design and estimator for the total sensitivity index.* Comput Phys Commun. 2010;181(2):259–270. DOI: [`10.1016/j.cpc.2009.09.018`](https://doi.org/10.1016/j.cpc.2009.09.018)

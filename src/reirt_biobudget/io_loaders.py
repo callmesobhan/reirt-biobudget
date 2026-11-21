@@ -129,7 +129,8 @@ def load_openkbp_patient(patient_dir: str | Path) -> OpenKBPPatient:
     else:
         body_mask = ct_hu_arr > -500.0
 
-    for_uid = f"1.2.826.0.1.3680043.8.498.OPENKBP.{pdir.name}.COURSE1"
+    pat_num = "".join(ch for ch in pdir.name if ch.isdigit()) or "0"
+    for_uid = f"1.2.826.0.1.3680043.8.498.2021.{pat_num}.1"
 
     ct_vol = Volume3D(
         data=ct_hu_arr,
@@ -281,7 +282,8 @@ def build_reirradiation_benchmark_from_openkbp(
     let_d_arr = (2.2 + 3.8 * distal_band) * body2_mask.astype(np.float64)
 
     for_uid_c1 = patient.ct_hu.frame_of_reference_uid
-    for_uid_c2 = f"1.2.826.0.1.3680043.8.498.OPENKBP.{patient.patient_id}.COURSE2"
+    pat_num = "".join(ch for ch in patient.patient_id if ch.isdigit()) or "0"
+    for_uid_c2 = f"1.2.826.0.1.3680043.8.498.2021.{pat_num}.2"
 
     prior_course = CourseSpec(
         course_id="COURSE_1_PRIMARY",

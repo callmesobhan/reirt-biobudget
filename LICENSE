@@ -1,0 +1,27 @@
+Apache License
+Version 2.0, January 2004
+http://www.apache.org/licenses/
+
+Copyright 2026 Sobhan (callmesobhan)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-------------------------------------------------------------------------------
+RESEARCH & CLINICAL SAFETY DISCLAIMER
+-------------------------------------------------------------------------------
+`reirt-biobudget` is academic research and educational medical physics software.
+IT IS NOT A MEDICAL DEVICE and has not been cleared or approved by the FDA,
+CE/MDR, or any regulatory authority for clinical diagnosis, treatment planning,
+or patient dose decision-making. Any clinical re-irradiation decision must be
+performed using clinically commissioned systems under the responsibility of
+qualified radiation oncologists and board-certified medical physicists.

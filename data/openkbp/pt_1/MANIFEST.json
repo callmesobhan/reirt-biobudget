@@ -1,0 +1,71 @@
+{
+  "dataset": "OpenKBP (Open-Access Knowledge-Based Planning Grand Challenge Dataset)",
+  "citation": "Babier A, Zhang B, Mahmood R, Moore KL, Purdie TG, McNiven AL, Chan TCY. OpenKBP: The open-access knowledge-based planning grand challenge and dataset. Medical Physics. 2021;48(9):5549-5561. doi:10.1002/mp.14845",
+  "repository": "https://github.com/ababier/open-kbp",
+  "license": "MIT (code) / CC BY 4.0 (dataset)",
+  "patient_id": "pt_1",
+  "split": "train-pats",
+  "downloaded_utc": "2026-11-21T19:13:03.464691+00:00",
+  "files": {
+    "ct.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/ct.csv",
+      "bytes": 1153464,
+      "sha256": "ed31b888e0fd1751ed8ec20c04c8f1575ff35811eb6497e1f0bc3a8b7ea8e68d"
+    },
+    "dose.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/dose.csv",
+      "bytes": 947448,
+      "sha256": "e850b853c7d6285992818cd0098a04bc4c22e81d582cb637452cabbf5c733f33"
+    },
+    "possible_dose_mask.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/possible_dose_mask.csv",
+      "bytes": 565702,
+      "sha256": "f6412f61bd0efbd067be6d294eab61675a0d4942f5aee282cd6d07035dce0e70"
+    },
+    "voxel_dimensions.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/voxel_dimensions.csv",
+      "bytes": 75,
+      "sha256": "ffa866c090e5b655e8067820b1dcc7ae16e89d0cc593ff8e8f3dda7f5290a246"
+    },
+    "Brainstem.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/Brainstem.csv",
+      "bytes": 2265,
+      "sha256": "acdf8de278d98967842d3e4540b2c821e711568be6a1c0fbcd7437a3dc4a1c45"
+    },
+    "SpinalCord.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/SpinalCord.csv",
+      "bytes": 3795,
+      "sha256": "fdaf5e9680d8195de73bccfb6d0712ca155c91ee698535cff29551defe072acd"
+    },
+    "RightParotid.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/RightParotid.csv",
+      "bytes": 1184,
+      "sha256": "8eb279734796947e67e865fdfabdb20115b8190ad5a7e503b41f31c9c68b0bc9"
+    },
+    "LeftParotid.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/LeftParotid.csv",
+      "bytes": 2644,
+      "sha256": "f1f54e7d07b35d08715407580efa4ca136ed3deb108e184117bb42f7691f0755"
+    },
+    "Mandible.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/Mandible.csv",
+      "bytes": 14719,
+      "sha256": "632cbdc97d25ecad48b169eee141838498e75b5f4731050b3b0a447b0b3287e2"
+    },
+    "PTV70.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/PTV70.csv",
+      "bytes": 123112,
+      "sha256": "c7e5df95d5696ade43b54e67b80f8eafa0b0ee5d4bc1609f3b0d61e40ac2b97c"
+    },
+    "PTV63.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/PTV63.csv",
+      "bytes": 32363,
+      "sha256": "fabd944952a0d75c05c8c4d49da214381c018216f5134bf171b508c3f314f397"
+    },
+    "PTV56.csv": {
+      "url": "https://raw.githubusercontent.com/ababier/open-kbp/master/provided-data/train-pats/pt_1/PTV56.csv",
+      "bytes": 25107,
+      "sha256": "1c76ce104f9931df1dee422c6fe2270abbf865082bacbccbda96a92883de2873"
+    }
+  }
+}

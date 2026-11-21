@@ -1,0 +1,58 @@
+cff-version: 1.2.0
+title: "reirt-biobudget: 3D Deformable Biophysical Dose-Accumulation & Remaining-Budget Engine"
+message: "If you use this software in academic research, please cite this repository and the underlying OpenKBP dataset."
+type: software
+version: "0.1.0"
+date-released: "2026-11-21"
+license: Apache-2.0
+authors:
+  - name: "Sobhan"
+    alias: "callmesobhan"
+keywords:
+  - medical physics
+  - radiotherapy
+  - re-irradiation
+  - radiobiology
+  - EQD2
+  - deformable image registration
+  - uncertainty quantification
+  - model context protocol
+references:
+  - type: article
+    title: "OpenKBP: The open-access knowledge-based planning grand challenge and dataset"
+    authors:
+      - family-names: "Babier"
+        given-names: "Aaron"
+      - family-names: "Zhang"
+        given-names: "Binghao"
+      - family-names: "Mahmood"
+        given-names: "Rafid"
+      - family-names: "Moore"
+        given-names: "Kevin L."
+      - family-names: "Purdie"
+        given-names: "Thomas G."
+      - family-names: "McNiven"
+        given-names: "Andrea L."
+      - family-names: "Chan"
+        given-names: "Timothy C. Y."
+    journal: "Medical Physics"
+    year: 2021
+    volume: 48
+    issue: 9
+    start: 5549
+    end: 5561
+    doi: "10.1002/mp.14845"
+  - type: article
+    title: "European Society for Radiotherapy and Oncology and European Organisation for Research and Treatment of Cancer consensus on re-irradiation: definition, reporting, and clinical decision making"
+    authors:
+      - family-names: "Andratschke"
+        given-names: "Nicolaus"
+      - family-names: "Willmann"
+        given-names: "Jonas"
+      - family-names: "Appelt"
+        given-names: "Ane L."
+    journal: "The Lancet Oncology"
+    year: 2022
+    volume: 23
+    issue: 10
+    doi: "10.1016/S1470-2045(22)00447-8"

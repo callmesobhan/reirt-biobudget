@@ -347,3 +347,76 @@ class SobolSensitivityResult(BaseModel):
     output_p95: float
     dominant_parameter: str
 
+
+class SourceSpanEvidence(BaseModel):
+    """Exact verbatim source span proving where a legacy clinical fact came from."""
+
+    field_name: str
+    value_extracted: str
+    start_char: int = Field(..., ge=0)
+    end_char: int = Field(..., ge=0)
+    quote: str
+
+
+class LegacyDVHConstraint(BaseModel):
+    """One sparse OAR dosimetric constraint extracted from a legacy PDF/text report."""
+
+    tg263_name: str
+    metric_name: str = Field(..., description="'Dmax', 'D0.03cc', 'Dmean', or 'V<x>Gy'")
+    value: float = Field(..., ge=0.0, description="Dose in Gy (or volume % for V_xGy).")
+    units: str = Field(default="Gy")
+    source_span: SourceSpanEvidence | None = None
+
+
+class LegacyCourseRecord(BaseModel):
+    """Structured legacy prior-course summary parsed when prior DICOM-RT files are missing."""
+
+    record_id: str
+    raw_source_label: str = "Outside-Hospital PDF Summary (No DICOM-RT)"
+    modality: Modality = Modality.PHOTON
+    model: RadiobiologyModel = RadiobiologyModel.LQ
+    beam_energy_label: str = "6 MV IMRT/VMAT"
+    n_fractions: int = Field(..., ge=1, le=200)
+    prescription_gy: float = Field(..., gt=0.0, le=200.0)
+    global_dmax_gy: float | None = Field(default=None, gt=0.0)
+    months_before_reirt: float = Field(default=18.0, ge=0.0)
+    oar_constraints: list[LegacyDVHConstraint] = Field(default_factory=list)
+    evidence_spans: list[SourceSpanEvidence] = Field(default_factory=list)
+
+
+class LegacyOARReconstructionSummary(BaseModel):
+    """Per-OAR comparison of Legacy-PDF reconstructed envelope vs. optional hidden DICOM truth."""
+
+    tg263_name: str
+    metric_name: str
+    reported_legacy_dose_gy: float | None = None
+    reconstructed_nom_dose_gy: float
+    reconstructed_upper_dose_gy: float
+    legacy_remaining_physical_ceiling_gy: float
+    # Populated when validated against hidden ground-truth DICOM/OpenKBP 3D dose
+    true_dicom_dose_gy: float | None = None
+    true_dicom_remaining_physical_ceiling_gy: float | None = None
+    dicom_recovery_value_gy: float | None = Field(
+        default=None,
+        description="Additional verified physical headroom (Gy) unlocked if original DICOM is retrieved.",
+    )
+    envelope_safely_bounds_truth: bool | None = None
+
+
+class LegacyReconstructionAudit(BaseModel):
+    """Complete serializable audit output of Missing-DICOM 3D Prior-Dose Envelope Reconstruction."""
+
+    case_id: str
+    legacy_record: LegacyCourseRecord
+    planned_course: CourseSpec
+    penumbra_gradient_max_gy_mm: float
+    pocs_iterations: int
+    max_constraint_fit_error_gy: float
+    max_inverse_residual_gy: float
+    oar_summaries: list[LegacyOARReconstructionSummary]
+    # Ground-truth validation metrics (when blinded truth volume is provided)
+    truth_voxel_upper_safety_rate_pct: float | None = None
+    truth_voxel_band_coverage_pct: float | None = None
+    provenance: ProvenanceRecord
+    warnings: list[str] = Field(default_factory=list)
+

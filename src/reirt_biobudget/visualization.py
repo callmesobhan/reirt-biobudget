@@ -27,7 +27,13 @@ from reirt_biobudget.budget_solver import compute_dvh_curve
 from reirt_biobudget.cohort import CohortBenchmarkResult
 from reirt_biobudget.harness.agent_orchestrator import AdversarialSweepReport
 from reirt_biobudget.io_loaders import ReIrradiationBenchmarkCase
-from reirt_biobudget.ir import OARNTCPSummary, SobolSensitivityResult
+from reirt_biobudget.ir import (
+    LegacyReconstructionAudit,
+    OARNTCPSummary,
+    SobolSensitivityResult,
+    Volume3D,
+)
+from reirt_biobudget.legacy_reconstructor import LegacyReconstructionOutput
 
 # Okabe-Ito / NPG colorblind-safe publication palette
 OAR_COLORS: dict[str, str] = {
@@ -1121,6 +1127,175 @@ def plot_fig7_sobol_ntcp_analysis(
     png_path = out_dir / "fig7_sobol_ntcp_analysis.png"
     fig.savefig(png_path, dpi=300)
     fig.savefig(out_dir / "fig7_sobol_ntcp_analysis.pdf")
+    plt.close(fig)
+    return png_path
+
+
+def plot_fig8_missing_dicom_reconstruction(
+    case: ReIrradiationBenchmarkCase,
+    legacy_out: LegacyReconstructionOutput,
+    hidden_truth_dose: Volume3D,
+    cohort_legacy_audits: list[tuple[str, LegacyReconstructionAudit]],
+    out_dir: Path,
+) -> Path:
+    """Figure 8: Missing-DICOM 3D Prior-Dose Envelope Reconstruction & DICOM Recovery Value."""
+    _configure_academic_style()
+    _dz, dy, dx = case.ct_course2.spacing_mm
+    z_idx, _ = _find_best_slice_indices(case)
+
+    body_ax = case.body_mask_course2[z_idx]
+    r0, r1, c0, c1 = _body_crop_bounds(body_ax, pad=6)
+    ct_sl = case.ct_course2.data[z_idx, r0:r1, c0:c1]
+    bsl = body_ax[r0:r1, c0:c1]
+
+    fig = plt.figure(figsize=(14.8, 9.2))
+    gs = GridSpec(2, 6, figure=fig, hspace=0.38, wspace=0.42, top=0.90, bottom=0.09)
+
+    vmax = max(float(np.percentile(hidden_truth_dose.data[case.body_mask_course2], 99.5)), 70.0)
+    top_specs = [
+        (0, 2, hidden_truth_dose.data, "Hidden Ground-Truth 3D Dose (OpenKBP)", "a"),
+        (2, 4, legacy_out.dose_nominal_3d.data, "Reconstructed Nominal Dose (PDF Only)", "b"),
+        (4, 6, legacy_out.dose_upper_3d.data, r"Conservative Upper Bound $D_{\mathrm{upper}}(\mathbf{x})$", "c"),
+    ]
+
+    im_ref = None
+    for c_start, c_end, vol_arr, title, plabel in top_specs:
+        ax = fig.add_subplot(gs[0, c_start:c_end])
+        ax.imshow(ct_sl, cmap="gray", vmin=-250, vmax=450, aspect=dy / dx, interpolation="bilinear")
+        d_sl = vol_arr[z_idx, r0:r1, c0:c1]
+        masked = np.ma.masked_where((~bsl) | (d_sl < 4.0), d_sl)
+        im_ref = ax.imshow(
+            masked,
+            cmap="inferno",
+            vmin=4.0,
+            vmax=vmax,
+            alpha=0.76,
+            aspect=dy / dx,
+            interpolation="bilinear",
+        )
+        for oar_name in ["SpinalCord", "Brainstem", "Bone_Mandible", "Parotid_L", "Parotid_R"]:
+            if oar_name in case.oar_masks_course2:
+                msl = case.oar_masks_course2[oar_name][z_idx, r0:r1, c0:c1]
+                if np.any(msl):
+                    ax.contour(
+                        msl.astype(float),
+                        levels=[0.5],
+                        colors=[OAR_COLORS[oar_name]],
+                        linewidths=1.4,
+                    )
+        ax.set_title(title, pad=8)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        _add_panel_label(ax, plabel, dark_bg=True)
+        if plabel == "a":
+            _add_scalebar(ax, 30.0, dx, color="white")
+
+    if im_ref is not None:
+        cbar_ax = fig.add_axes([0.925, 0.56, 0.013, 0.31])
+        cbar = fig.colorbar(im_ref, cax=cbar_ax)
+        cbar.set_label("Prior Physical Dose (Gy)", fontsize=8.5, fontweight="bold")
+
+    # Panel (d): Blinded OAR DVH Envelopes vs. Hidden Ground-Truth OpenKBP DVH
+    ax_d = fig.add_subplot(gs[1, 0:3])
+    dose_grid = np.linspace(0.0, 80.0, 320)
+    plot_oars = [
+        o for o in ["SpinalCord", "Brainstem", "Bone_Mandible", "Parotid_L"]
+        if o in legacy_out.oar_reconstructed_envelopes
+    ]
+    for oar in plot_oars:
+        env = legacy_out.oar_reconstructed_envelopes[oar]
+        col = OAR_COLORS.get(oar, "#333333")
+        dvh_lo = compute_dvh_curve(env["dose_lower"], dose_grid)
+        dvh_nom = compute_dvh_curve(env["dose_nominal"], dose_grid)
+        dvh_hi = compute_dvh_curve(env["dose_upper"], dose_grid)
+        ax_d.fill_between(dose_grid, dvh_lo, dvh_hi, color=col, alpha=0.18, linewidth=0)
+        ax_d.plot(dose_grid, dvh_nom, color=col, linewidth=1.7, label=f"{oar} (PDF Recon.)")
+        if "dose_truth" in env:
+            dvh_tr = compute_dvh_curve(env["dose_truth"], dose_grid)
+            ax_d.plot(dose_grid, dvh_tr, color=col, linewidth=2.1, linestyle="--")
+
+    ax_d.set_xlim(0, 80)
+    ax_d.set_ylim(0, 103)
+    ax_d.set_xlabel("Prior Physical Dose (Gy)", fontweight="bold")
+    ax_d.set_ylabel("Relative OAR Volume (%)", fontweight="bold")
+    safety_pct = legacy_out.audit.truth_voxel_upper_safety_rate_pct or 0.0
+    ax_d.set_title(
+        f"Blinded DVH Envelope vs. Hidden Truth (Upper Bound Safety: {safety_pct:.1f}%)",
+        pad=8,
+    )
+    ax_d.grid(True, linestyle="--", alpha=0.25)
+    ax_d.spines["top"].set_visible(False)
+    ax_d.spines["right"].set_visible(False)
+    handles, _ = ax_d.get_legend_handles_labels()
+    handles.append(mpatches.Patch(facecolor="#888888", alpha=0.25, label=r"Feasible Band $[D_{\mathrm{low}}, D_{\mathrm{up}}]$"))
+    handles.append(plt.Line2D([0], [0], color="#222222", linestyle="--", linewidth=2.0, label="Hidden Ground Truth (OpenKBP)"))
+    ax_d.legend(handles=handles, loc="lower left", ncol=2, fontsize=7.2)
+    _add_panel_label(ax_d, "d")
+
+    # Panel (e): Quantified "Value of Recovering Original DICOM" Across pt_1..pt_3
+    ax_e = fig.add_subplot(gs[1, 3:6])
+    x_labels: list[str] = []
+    leg_vals: list[float] = []
+    dcm_vals: list[float] = []
+    deltas: list[float] = []
+
+    for pid, aud in cohort_legacy_audits:
+        for oar_key in ("SpinalCord", "Brainstem"):
+            match = next((s for s in aud.oar_summaries if s.tg263_name == oar_key), None)
+            if match is None or match.true_dicom_remaining_physical_ceiling_gy is None:
+                continue
+            short_o = "Cord" if oar_key == "SpinalCord" else "BStem"
+            x_labels.append(f"{pid.upper()}\n{short_o}")
+            leg_vals.append(match.legacy_remaining_physical_ceiling_gy)
+            dcm_vals.append(match.true_dicom_remaining_physical_ceiling_gy)
+            deltas.append(match.dicom_recovery_value_gy or 0.0)
+
+    x = np.arange(len(x_labels))
+    w = 0.36
+    b1 = ax_e.bar(x - w / 2, leg_vals, width=w * 0.92, color="#E69F00", edgecolor="white", label="Legacy PDF-Only Safe Ceiling")
+    b2 = ax_e.bar(x + w / 2, dcm_vals, width=w * 0.92, color="#0072B2", edgecolor="white", label="Full Ground-Truth DICOM Ceiling")
+
+    for bi, (bar1, bar2, lv, dv, dlt) in enumerate(zip(b1, b2, leg_vals, dcm_vals, deltas)):
+        ax_e.text(bar1.get_x() + bar1.get_width() / 2, lv + 0.4, f"{lv:.1f}", ha="center", va="bottom", fontsize=6.9, color="#8C510A")
+        ax_e.text(bar2.get_x() + bar2.get_width() / 2, dv + 0.4, f"{dv:.1f}", ha="center", va="bottom", fontsize=6.9, color="#004C78")
+        top_y = max(lv, dv) + 2.3
+        ax_e.text(
+            x[bi],
+            top_y,
+            f"{dlt:+.1f} Gy",
+            ha="center",
+            va="bottom",
+            fontsize=7.2,
+            fontweight="bold",
+            color="#2E7D32" if dlt >= 0 else "#C62828",
+        )
+
+    ax_e.set_xticks(x)
+    ax_e.set_xticklabels(x_labels, fontsize=7.6)
+    ax_e.set_ylim(0, max(max(dcm_vals, default=25.0), max(leg_vals, default=25.0)) + 6.5)
+    ax_e.set_ylabel("Course-2 Remaining Physical Ceiling (Gy, 5-fx LQL)", fontweight="bold")
+    ax_e.set_title("Value of Recovering Original DICOM (+Δ Gy Unlocked)", pad=34)
+    ax_e.grid(True, axis="y", linestyle="--", alpha=0.25)
+    ax_e.spines["top"].set_visible(False)
+    ax_e.spines["right"].set_visible(False)
+    ax_e.legend(loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=2, fontsize=7.4)
+    _add_panel_label(ax_e, "e")
+
+    fig.suptitle(
+        "Missing-DICOM / Legacy-PDF Physics-Constrained 3D Prior-Dose Envelope Reconstruction (Blinded OpenKBP Validation)",
+        fontsize=11.8,
+        fontweight="bold",
+        y=0.975,
+    )
+    footer = (
+        "Blinded validation on OpenKBP (pt_1..pt_3; Babier et al., Med Phys 2021, DOI: 10.1002/mp.14845, CC BY 4.0): "
+        "prior 3D dose hidden during reconstruction. Research tool — not a medical device."
+    )
+    fig.text(0.5, 0.018, footer, ha="center", fontsize=7.2, color="#555555", style="italic")
+
+    png_path = out_dir / "fig8_missing_dicom_reconstruction.png"
+    fig.savefig(png_path, dpi=300)
+    fig.savefig(out_dir / "fig8_missing_dicom_reconstruction.pdf")
     plt.close(fig)
     return png_path
 

@@ -1,0 +1,758 @@
+{
+  "primary_legacy_summary_text": "EXTERNAL RADIATION ONCOLOGY TREATMENT COMPLETION SUMMARY \u2014 PATIENT PT_1\nFacility: Regional Cancer Center (Legacy TPS Archive \u2014 DICOM-RT Unavailable)\nTechnique: 6 MV IMRT head-and-neck radiotherapy, completed 18 months ago.\nPrescription: 70.0 Gy in 35 fractions.\nGlobal Dmax: 74.2 Gy.\nReported Critical Organ DVH Summary:\n  - Bone_Mandible D0.03cc: 73.8 Gy\n  - Brainstem D0.03cc: 40.4 Gy\n  - Parotid_L Dmean: 61.7 Gy\n  - Parotid_R Dmean: 56.3 Gy\n  - SpinalCord D0.03cc: 32.0 Gy",
+  "cohort_blinded_audits": {
+    "pt_1": {
+      "case_id": "OPENKBP-PT_1-REIRT-NO-DICOM",
+      "legacy_record": {
+        "record_id": "LEGACY_PT_1",
+        "raw_source_label": "Outside-Hospital PDF Summary (No DICOM-RT)",
+        "modality": "photon",
+        "model": "lq",
+        "beam_energy_label": "6 MV IMRT",
+        "n_fractions": 35,
+        "prescription_gy": 70.0,
+        "global_dmax_gy": 74.2,
+        "months_before_reirt": 18.0,
+        "oar_constraints": [
+          {
+            "tg263_name": "Bone_Mandible",
+            "metric_name": "D0.03cc",
+            "value": 73.8,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Bone_Mandible.D0.03cc",
+              "value_extracted": "73.80 Gy",
+              "start_char": 325,
+              "end_char": 355,
+              "quote": "Bone_Mandible D0.03cc: 73.8 Gy"
+            }
+          },
+          {
+            "tg263_name": "Brainstem",
+            "metric_name": "D0.03cc",
+            "value": 40.4,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Brainstem.D0.03cc",
+              "value_extracted": "40.40 Gy",
+              "start_char": 360,
+              "end_char": 386,
+              "quote": "Brainstem D0.03cc: 40.4 Gy"
+            }
+          },
+          {
+            "tg263_name": "Parotid_L",
+            "metric_name": "Dmean",
+            "value": 61.7,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Parotid_L.Dmean",
+              "value_extracted": "61.70 Gy",
+              "start_char": 391,
+              "end_char": 415,
+              "quote": "Parotid_L Dmean: 61.7 Gy"
+            }
+          },
+          {
+            "tg263_name": "Parotid_R",
+            "metric_name": "Dmean",
+            "value": 56.3,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Parotid_R.Dmean",
+              "value_extracted": "56.30 Gy",
+              "start_char": 420,
+              "end_char": 444,
+              "quote": "Parotid_R Dmean: 56.3 Gy"
+            }
+          },
+          {
+            "tg263_name": "SpinalCord",
+            "metric_name": "D0.03cc",
+            "value": 32.0,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "SpinalCord.D0.03cc",
+              "value_extracted": "32.00 Gy",
+              "start_char": 449,
+              "end_char": 476,
+              "quote": "SpinalCord D0.03cc: 32.0 Gy"
+            }
+          }
+        ],
+        "evidence_spans": [
+          {
+            "field_name": "prescription_and_fractions",
+            "value_extracted": "70.0 Gy / 35 fx",
+            "start_char": 237,
+            "end_char": 260,
+            "quote": "70.0 Gy in 35 fractions"
+          },
+          {
+            "field_name": "months_before_reirt",
+            "value_extracted": "18.0 months",
+            "start_char": 208,
+            "end_char": 221,
+            "quote": "18 months ago"
+          },
+          {
+            "field_name": "global_dmax_gy",
+            "value_extracted": "74.2 Gy",
+            "start_char": 262,
+            "end_char": 282,
+            "quote": "Global Dmax: 74.2 Gy"
+          },
+          {
+            "field_name": "Bone_Mandible.D0.03cc",
+            "value_extracted": "73.80 Gy",
+            "start_char": 325,
+            "end_char": 355,
+            "quote": "Bone_Mandible D0.03cc: 73.8 Gy"
+          },
+          {
+            "field_name": "Brainstem.D0.03cc",
+            "value_extracted": "40.40 Gy",
+            "start_char": 360,
+            "end_char": 386,
+            "quote": "Brainstem D0.03cc: 40.4 Gy"
+          },
+          {
+            "field_name": "Parotid_L.Dmean",
+            "value_extracted": "61.70 Gy",
+            "start_char": 391,
+            "end_char": 415,
+            "quote": "Parotid_L Dmean: 61.7 Gy"
+          },
+          {
+            "field_name": "Parotid_R.Dmean",
+            "value_extracted": "56.30 Gy",
+            "start_char": 420,
+            "end_char": 444,
+            "quote": "Parotid_R Dmean: 56.3 Gy"
+          },
+          {
+            "field_name": "SpinalCord.D0.03cc",
+            "value_extracted": "32.00 Gy",
+            "start_char": 449,
+            "end_char": 476,
+            "quote": "SpinalCord D0.03cc: 32.0 Gy"
+          }
+        ]
+      },
+      "planned_course": {
+        "course_id": "COURSE_2_SALVAGE",
+        "label": "Salvage Re-Irradiation (35 Gy / 5 fx, LQL)",
+        "modality": "photon",
+        "model": "lql",
+        "n_fractions": 5,
+        "prescription_gy": 35.0,
+        "months_before_reirt": 0.0,
+        "frame_of_reference_uid": "1.2.826.0.1.3680043.8.498.2021.1.2",
+        "d_t_gy": null,
+        "fraction_duration_h": 0.0,
+        "fractions_per_day": 1,
+        "interfraction_interval_h": 24.0,
+        "fixed_rbe": 1.1,
+        "mean_let_d_kev_um": 2.5,
+        "source_provenance": "Derived longitudinal benchmark (analytical SVF + conformal salvage dose)"
+      },
+      "penumbra_gradient_max_gy_mm": 3.8,
+      "pocs_iterations": 12,
+      "max_constraint_fit_error_gy": 0.0,
+      "max_inverse_residual_gy": 1.7763568394002505e-15,
+      "oar_summaries": [
+        {
+          "tg263_name": "Brainstem",
+          "metric_name": "D0.03cc",
+          "reported_legacy_dose_gy": 40.4,
+          "reconstructed_nom_dose_gy": 40.4,
+          "reconstructed_upper_dose_gy": 46.13,
+          "legacy_remaining_physical_ceiling_gy": 20.83,
+          "true_dicom_dose_gy": 38.87,
+          "true_dicom_remaining_physical_ceiling_gy": 23.31,
+          "dicom_recovery_value_gy": 2.48,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "SpinalCord",
+          "metric_name": "D0.03cc",
+          "reported_legacy_dose_gy": 32.0,
+          "reconstructed_nom_dose_gy": 32.0,
+          "reconstructed_upper_dose_gy": 37.06,
+          "legacy_remaining_physical_ceiling_gy": 22.43,
+          "true_dicom_dose_gy": 36.72,
+          "true_dicom_remaining_physical_ceiling_gy": 22.54,
+          "dicom_recovery_value_gy": 0.1,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "Parotid_R",
+          "metric_name": "Dmean",
+          "reported_legacy_dose_gy": 56.3,
+          "reconstructed_nom_dose_gy": 56.3,
+          "reconstructed_upper_dose_gy": 63.3,
+          "legacy_remaining_physical_ceiling_gy": 0.0,
+          "true_dicom_dose_gy": 54.29,
+          "true_dicom_remaining_physical_ceiling_gy": 0.0,
+          "dicom_recovery_value_gy": 0.0,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "Parotid_L",
+          "metric_name": "Dmean",
+          "reported_legacy_dose_gy": 61.7,
+          "reconstructed_nom_dose_gy": 61.7,
+          "reconstructed_upper_dose_gy": 69.14,
+          "legacy_remaining_physical_ceiling_gy": 0.0,
+          "true_dicom_dose_gy": 60.25,
+          "true_dicom_remaining_physical_ceiling_gy": 0.0,
+          "dicom_recovery_value_gy": 0.0,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "Bone_Mandible",
+          "metric_name": "D0.03cc",
+          "reported_legacy_dose_gy": 73.8,
+          "reconstructed_nom_dose_gy": 73.8,
+          "reconstructed_upper_dose_gy": 74.2,
+          "legacy_remaining_physical_ceiling_gy": 11.91,
+          "true_dicom_dose_gy": 73.77,
+          "true_dicom_remaining_physical_ceiling_gy": 12.28,
+          "dicom_recovery_value_gy": 0.37,
+          "envelope_safely_bounds_truth": true
+        }
+      ],
+      "truth_voxel_upper_safety_rate_pct": 100.0,
+      "truth_voxel_band_coverage_pct": 99.5,
+      "provenance": {
+        "engine_version": "0.3.0",
+        "timestamp_utc": "2026-11-24T21:03:39.399021+00:00",
+        "case_id": "OPENKBP-PT_1-REIRT-NO-DICOM",
+        "dataset_source": "Legacy PDF Summary (No Prior DICOM-RT)",
+        "dataset_citation": "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",
+        "dataset_license": "CC BY 4.0 (validation ground truth) / Apache-2.0 (reconstructor)",
+        "input_checksums": {
+          "legacy_record_spec": "4457b396829dea67de42c2cbe9b95fbe73ba48d3c679dcf98e7dc2cc101c5289",
+          "planned_course_spec": "d5aa03af784bd0197c12712b2ebd8242de50967b137dd7e8db8986ebe4cfec71",
+          "reconstructed_upper_3d": "2b39f2824d623849b05423c46fe56ed0b62d4604c400c5815909b3b9fb7cddc5",
+          "reconstructed_nominal_3d": "078be43d52fb884aa5a6101bd1e87ea9f7fd37d15f05e4f5f1b238710e098f08"
+        },
+        "invariants_checked": [
+          "LEGACY_SOURCE_SPAN_PROVENANCE_VERIFIED",
+          "LIPSCHITZ_PENUMBRA_BOUND_ORDERING_0_LE_LOWER_LE_NOM_LE_UPPER",
+          "POCS_LEGACY_DVH_CONSTRAINT_SATISFACTION",
+          "FORWARD_INVERSE_RESIDUAL_LE_1e-06_GY"
+        ],
+        "max_inverse_residual_gy": 1.7763568394002505e-15,
+        "all_invariants_passed": true,
+        "abstention_triggered": false,
+        "abstention_reason": null
+      },
+      "warnings": [
+        "Prior 3D dose was reconstructed from sparse legacy summary text without prior DICOM-RT. Conservative upper-bound remaining budgets include inter-course spatial uncertainty cushions."
+      ]
+    },
+    "pt_2": {
+      "case_id": "OPENKBP-PT_2-REIRT-NO-DICOM",
+      "legacy_record": {
+        "record_id": "LEGACY_PT_2",
+        "raw_source_label": "Outside-Hospital PDF Summary (No DICOM-RT)",
+        "modality": "photon",
+        "model": "lq",
+        "beam_energy_label": "6 MV IMRT",
+        "n_fractions": 35,
+        "prescription_gy": 70.0,
+        "global_dmax_gy": 72.8,
+        "months_before_reirt": 18.0,
+        "oar_constraints": [
+          {
+            "tg263_name": "Bone_Mandible",
+            "metric_name": "D0.03cc",
+            "value": 65.6,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Bone_Mandible.D0.03cc",
+              "value_extracted": "65.60 Gy",
+              "start_char": 325,
+              "end_char": 355,
+              "quote": "Bone_Mandible D0.03cc: 65.6 Gy"
+            }
+          },
+          {
+            "tg263_name": "Brainstem",
+            "metric_name": "D0.03cc",
+            "value": 34.3,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Brainstem.D0.03cc",
+              "value_extracted": "34.30 Gy",
+              "start_char": 360,
+              "end_char": 386,
+              "quote": "Brainstem D0.03cc: 34.3 Gy"
+            }
+          },
+          {
+            "tg263_name": "Esophagus",
+            "metric_name": "D0.03cc",
+            "value": 68.5,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Esophagus.D0.03cc",
+              "value_extracted": "68.50 Gy",
+              "start_char": 391,
+              "end_char": 417,
+              "quote": "Esophagus D0.03cc: 68.5 Gy"
+            }
+          },
+          {
+            "tg263_name": "Parotid_L",
+            "metric_name": "Dmean",
+            "value": 31.0,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Parotid_L.Dmean",
+              "value_extracted": "31.00 Gy",
+              "start_char": 422,
+              "end_char": 446,
+              "quote": "Parotid_L Dmean: 31.0 Gy"
+            }
+          },
+          {
+            "tg263_name": "Parotid_R",
+            "metric_name": "Dmean",
+            "value": 34.4,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Parotid_R.Dmean",
+              "value_extracted": "34.40 Gy",
+              "start_char": 451,
+              "end_char": 475,
+              "quote": "Parotid_R Dmean: 34.4 Gy"
+            }
+          },
+          {
+            "tg263_name": "SpinalCord",
+            "metric_name": "D0.03cc",
+            "value": 41.7,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "SpinalCord.D0.03cc",
+              "value_extracted": "41.70 Gy",
+              "start_char": 480,
+              "end_char": 507,
+              "quote": "SpinalCord D0.03cc: 41.7 Gy"
+            }
+          }
+        ],
+        "evidence_spans": [
+          {
+            "field_name": "prescription_and_fractions",
+            "value_extracted": "70.0 Gy / 35 fx",
+            "start_char": 237,
+            "end_char": 260,
+            "quote": "70.0 Gy in 35 fractions"
+          },
+          {
+            "field_name": "months_before_reirt",
+            "value_extracted": "18.0 months",
+            "start_char": 208,
+            "end_char": 221,
+            "quote": "18 months ago"
+          },
+          {
+            "field_name": "global_dmax_gy",
+            "value_extracted": "72.8 Gy",
+            "start_char": 262,
+            "end_char": 282,
+            "quote": "Global Dmax: 72.8 Gy"
+          },
+          {
+            "field_name": "Bone_Mandible.D0.03cc",
+            "value_extracted": "65.60 Gy",
+            "start_char": 325,
+            "end_char": 355,
+            "quote": "Bone_Mandible D0.03cc: 65.6 Gy"
+          },
+          {
+            "field_name": "Brainstem.D0.03cc",
+            "value_extracted": "34.30 Gy",
+            "start_char": 360,
+            "end_char": 386,
+            "quote": "Brainstem D0.03cc: 34.3 Gy"
+          },
+          {
+            "field_name": "Esophagus.D0.03cc",
+            "value_extracted": "68.50 Gy",
+            "start_char": 391,
+            "end_char": 417,
+            "quote": "Esophagus D0.03cc: 68.5 Gy"
+          },
+          {
+            "field_name": "Parotid_L.Dmean",
+            "value_extracted": "31.00 Gy",
+            "start_char": 422,
+            "end_char": 446,
+            "quote": "Parotid_L Dmean: 31.0 Gy"
+          },
+          {
+            "field_name": "Parotid_R.Dmean",
+            "value_extracted": "34.40 Gy",
+            "start_char": 451,
+            "end_char": 475,
+            "quote": "Parotid_R Dmean: 34.4 Gy"
+          },
+          {
+            "field_name": "SpinalCord.D0.03cc",
+            "value_extracted": "41.70 Gy",
+            "start_char": 480,
+            "end_char": 507,
+            "quote": "SpinalCord D0.03cc: 41.7 Gy"
+          }
+        ]
+      },
+      "planned_course": {
+        "course_id": "COURSE_2_SALVAGE",
+        "label": "Salvage Re-Irradiation (35 Gy / 5 fx, LQL)",
+        "modality": "photon",
+        "model": "lql",
+        "n_fractions": 5,
+        "prescription_gy": 35.0,
+        "months_before_reirt": 0.0,
+        "frame_of_reference_uid": "1.2.826.0.1.3680043.8.498.2021.2.2",
+        "d_t_gy": null,
+        "fraction_duration_h": 0.0,
+        "fractions_per_day": 1,
+        "interfraction_interval_h": 24.0,
+        "fixed_rbe": 1.1,
+        "mean_let_d_kev_um": 2.5,
+        "source_provenance": "Derived longitudinal benchmark (analytical SVF + conformal salvage dose)"
+      },
+      "penumbra_gradient_max_gy_mm": 3.8,
+      "pocs_iterations": 12,
+      "max_constraint_fit_error_gy": 0.0,
+      "max_inverse_residual_gy": 8.881784197001252e-16,
+      "oar_summaries": [
+        {
+          "tg263_name": "Brainstem",
+          "metric_name": "D0.03cc",
+          "reported_legacy_dose_gy": 34.3,
+          "reconstructed_nom_dose_gy": 34.3,
+          "reconstructed_upper_dose_gy": 39.54,
+          "legacy_remaining_physical_ceiling_gy": 23.09,
+          "true_dicom_dose_gy": 33.8,
+          "true_dicom_remaining_physical_ceiling_gy": 24.79,
+          "dicom_recovery_value_gy": 1.69,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "SpinalCord",
+          "metric_name": "D0.03cc",
+          "reported_legacy_dose_gy": 41.7,
+          "reconstructed_nom_dose_gy": 41.7,
+          "reconstructed_upper_dose_gy": 47.54,
+          "legacy_remaining_physical_ceiling_gy": 18.66,
+          "true_dicom_dose_gy": 44.25,
+          "true_dicom_remaining_physical_ceiling_gy": 19.96,
+          "dicom_recovery_value_gy": 1.3,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "Parotid_R",
+          "metric_name": "Dmean",
+          "reported_legacy_dose_gy": 34.4,
+          "reconstructed_nom_dose_gy": 34.4,
+          "reconstructed_upper_dose_gy": 39.65,
+          "legacy_remaining_physical_ceiling_gy": 5.66,
+          "true_dicom_dose_gy": 33.06,
+          "true_dicom_remaining_physical_ceiling_gy": 10.61,
+          "dicom_recovery_value_gy": 4.95,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "Parotid_L",
+          "metric_name": "Dmean",
+          "reported_legacy_dose_gy": 31.0,
+          "reconstructed_nom_dose_gy": 31.0,
+          "reconstructed_upper_dose_gy": 35.98,
+          "legacy_remaining_physical_ceiling_gy": 8.65,
+          "true_dicom_dose_gy": 29.9,
+          "true_dicom_remaining_physical_ceiling_gy": 12.46,
+          "dicom_recovery_value_gy": 3.8,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "Esophagus",
+          "metric_name": "D0.03cc",
+          "reported_legacy_dose_gy": 68.5,
+          "reconstructed_nom_dose_gy": 68.5,
+          "reconstructed_upper_dose_gy": 72.8,
+          "legacy_remaining_physical_ceiling_gy": 5.71,
+          "true_dicom_dose_gy": 67.26,
+          "true_dicom_remaining_physical_ceiling_gy": 11.44,
+          "dicom_recovery_value_gy": 5.73,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "Bone_Mandible",
+          "metric_name": "D0.03cc",
+          "reported_legacy_dose_gy": 65.6,
+          "reconstructed_nom_dose_gy": 65.6,
+          "reconstructed_upper_dose_gy": 72.8,
+          "legacy_remaining_physical_ceiling_gy": 13.11,
+          "true_dicom_dose_gy": 63.35,
+          "true_dicom_remaining_physical_ceiling_gy": 19.59,
+          "dicom_recovery_value_gy": 6.49,
+          "envelope_safely_bounds_truth": true
+        }
+      ],
+      "truth_voxel_upper_safety_rate_pct": 92.1,
+      "truth_voxel_band_coverage_pct": 92.1,
+      "provenance": {
+        "engine_version": "0.3.0",
+        "timestamp_utc": "2026-11-24T21:03:43.746736+00:00",
+        "case_id": "OPENKBP-PT_2-REIRT-NO-DICOM",
+        "dataset_source": "Legacy PDF Summary (No Prior DICOM-RT)",
+        "dataset_citation": "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",
+        "dataset_license": "CC BY 4.0 (validation ground truth) / Apache-2.0 (reconstructor)",
+        "input_checksums": {
+          "legacy_record_spec": "0013663fe3250ff0483a73e1eb7e6e214296841edd7045b812097c85be1c1feb",
+          "planned_course_spec": "2d5b240c1873e1deec4ddea23f1b22271b71c1537ae7f3b0f195a101e8234949",
+          "reconstructed_upper_3d": "6b7d017733e7a765768255b7c077202e0c503c5988a225bf65bf8eb71e102b6f",
+          "reconstructed_nominal_3d": "3ef993cafb5ad3109f2f4597dbd3d8d2bf673645801909c5c5d4ec2f2409dca0"
+        },
+        "invariants_checked": [
+          "LEGACY_SOURCE_SPAN_PROVENANCE_VERIFIED",
+          "LIPSCHITZ_PENUMBRA_BOUND_ORDERING_0_LE_LOWER_LE_NOM_LE_UPPER",
+          "POCS_LEGACY_DVH_CONSTRAINT_SATISFACTION",
+          "FORWARD_INVERSE_RESIDUAL_LE_1e-06_GY"
+        ],
+        "max_inverse_residual_gy": 8.881784197001252e-16,
+        "all_invariants_passed": true,
+        "abstention_triggered": false,
+        "abstention_reason": null
+      },
+      "warnings": [
+        "Prior 3D dose was reconstructed from sparse legacy summary text without prior DICOM-RT. Conservative upper-bound remaining budgets include inter-course spatial uncertainty cushions."
+      ]
+    },
+    "pt_3": {
+      "case_id": "OPENKBP-PT_3-REIRT-NO-DICOM",
+      "legacy_record": {
+        "record_id": "LEGACY_PT_3",
+        "raw_source_label": "Outside-Hospital PDF Summary (No DICOM-RT)",
+        "modality": "photon",
+        "model": "lq",
+        "beam_energy_label": "6 MV IMRT",
+        "n_fractions": 35,
+        "prescription_gy": 70.0,
+        "global_dmax_gy": 75.7,
+        "months_before_reirt": 18.0,
+        "oar_constraints": [
+          {
+            "tg263_name": "Brainstem",
+            "metric_name": "D0.03cc",
+            "value": 34.0,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Brainstem.D0.03cc",
+              "value_extracted": "34.00 Gy",
+              "start_char": 325,
+              "end_char": 351,
+              "quote": "Brainstem D0.03cc: 34.0 Gy"
+            }
+          },
+          {
+            "tg263_name": "Parotid_L",
+            "metric_name": "Dmean",
+            "value": 30.2,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Parotid_L.Dmean",
+              "value_extracted": "30.20 Gy",
+              "start_char": 356,
+              "end_char": 380,
+              "quote": "Parotid_L Dmean: 30.2 Gy"
+            }
+          },
+          {
+            "tg263_name": "Parotid_R",
+            "metric_name": "Dmean",
+            "value": 60.1,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "Parotid_R.Dmean",
+              "value_extracted": "60.10 Gy",
+              "start_char": 385,
+              "end_char": 409,
+              "quote": "Parotid_R Dmean: 60.1 Gy"
+            }
+          },
+          {
+            "tg263_name": "SpinalCord",
+            "metric_name": "D0.03cc",
+            "value": 37.9,
+            "units": "Gy",
+            "source_span": {
+              "field_name": "SpinalCord.D0.03cc",
+              "value_extracted": "37.90 Gy",
+              "start_char": 414,
+              "end_char": 441,
+              "quote": "SpinalCord D0.03cc: 37.9 Gy"
+            }
+          }
+        ],
+        "evidence_spans": [
+          {
+            "field_name": "prescription_and_fractions",
+            "value_extracted": "70.0 Gy / 35 fx",
+            "start_char": 237,
+            "end_char": 260,
+            "quote": "70.0 Gy in 35 fractions"
+          },
+          {
+            "field_name": "months_before_reirt",
+            "value_extracted": "18.0 months",
+            "start_char": 208,
+            "end_char": 221,
+            "quote": "18 months ago"
+          },
+          {
+            "field_name": "global_dmax_gy",
+            "value_extracted": "75.7 Gy",
+            "start_char": 262,
+            "end_char": 282,
+            "quote": "Global Dmax: 75.7 Gy"
+          },
+          {
+            "field_name": "Brainstem.D0.03cc",
+            "value_extracted": "34.00 Gy",
+            "start_char": 325,
+            "end_char": 351,
+            "quote": "Brainstem D0.03cc: 34.0 Gy"
+          },
+          {
+            "field_name": "Parotid_L.Dmean",
+            "value_extracted": "30.20 Gy",
+            "start_char": 356,
+            "end_char": 380,
+            "quote": "Parotid_L Dmean: 30.2 Gy"
+          },
+          {
+            "field_name": "Parotid_R.Dmean",
+            "value_extracted": "60.10 Gy",
+            "start_char": 385,
+            "end_char": 409,
+            "quote": "Parotid_R Dmean: 60.1 Gy"
+          },
+          {
+            "field_name": "SpinalCord.D0.03cc",
+            "value_extracted": "37.90 Gy",
+            "start_char": 414,
+            "end_char": 441,
+            "quote": "SpinalCord D0.03cc: 37.9 Gy"
+          }
+        ]
+      },
+      "planned_course": {
+        "course_id": "COURSE_2_SALVAGE",
+        "label": "Salvage Re-Irradiation (35 Gy / 5 fx, LQL)",
+        "modality": "photon",
+        "model": "lql",
+        "n_fractions": 5,
+        "prescription_gy": 35.0,
+        "months_before_reirt": 0.0,
+        "frame_of_reference_uid": "1.2.826.0.1.3680043.8.498.2021.3.2",
+        "d_t_gy": null,
+        "fraction_duration_h": 0.0,
+        "fractions_per_day": 1,
+        "interfraction_interval_h": 24.0,
+        "fixed_rbe": 1.1,
+        "mean_let_d_kev_um": 2.5,
+        "source_provenance": "Derived longitudinal benchmark (analytical SVF + conformal salvage dose)"
+      },
+      "penumbra_gradient_max_gy_mm": 3.8,
+      "pocs_iterations": 12,
+      "max_constraint_fit_error_gy": 0.0,
+      "max_inverse_residual_gy": 7.105427357601002e-15,
+      "oar_summaries": [
+        {
+          "tg263_name": "Brainstem",
+          "metric_name": "D0.03cc",
+          "reported_legacy_dose_gy": 34.0,
+          "reconstructed_nom_dose_gy": 34.0,
+          "reconstructed_upper_dose_gy": 39.22,
+          "legacy_remaining_physical_ceiling_gy": 23.2,
+          "true_dicom_dose_gy": 32.94,
+          "true_dicom_remaining_physical_ceiling_gy": 25.02,
+          "dicom_recovery_value_gy": 1.82,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "SpinalCord",
+          "metric_name": "D0.03cc",
+          "reported_legacy_dose_gy": 37.9,
+          "reconstructed_nom_dose_gy": 37.9,
+          "reconstructed_upper_dose_gy": 43.43,
+          "legacy_remaining_physical_ceiling_gy": 20.27,
+          "true_dicom_dose_gy": 37.02,
+          "true_dicom_remaining_physical_ceiling_gy": 22.45,
+          "dicom_recovery_value_gy": 2.18,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "Parotid_R",
+          "metric_name": "Dmean",
+          "reported_legacy_dose_gy": 60.1,
+          "reconstructed_nom_dose_gy": 60.1,
+          "reconstructed_upper_dose_gy": 67.41,
+          "legacy_remaining_physical_ceiling_gy": 0.0,
+          "true_dicom_dose_gy": 58.05,
+          "true_dicom_remaining_physical_ceiling_gy": 0.0,
+          "dicom_recovery_value_gy": 0.0,
+          "envelope_safely_bounds_truth": true
+        },
+        {
+          "tg263_name": "Parotid_L",
+          "metric_name": "Dmean",
+          "reported_legacy_dose_gy": 30.2,
+          "reconstructed_nom_dose_gy": 30.2,
+          "reconstructed_upper_dose_gy": 35.12,
+          "legacy_remaining_physical_ceiling_gy": 9.27,
+          "true_dicom_dose_gy": 29.18,
+          "true_dicom_remaining_physical_ceiling_gy": 12.84,
+          "dicom_recovery_value_gy": 3.58,
+          "envelope_safely_bounds_truth": true
+        }
+      ],
+      "truth_voxel_upper_safety_rate_pct": 88.1,
+      "truth_voxel_band_coverage_pct": 88.0,
+      "provenance": {
+        "engine_version": "0.3.0",
+        "timestamp_utc": "2026-11-24T21:03:47.757807+00:00",
+        "case_id": "OPENKBP-PT_3-REIRT-NO-DICOM",
+        "dataset_source": "Legacy PDF Summary (No Prior DICOM-RT)",
+        "dataset_citation": "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",
+        "dataset_license": "CC BY 4.0 (validation ground truth) / Apache-2.0 (reconstructor)",
+        "input_checksums": {
+          "legacy_record_spec": "43883ad299273d9f8a4a51f9616f8a57a4d10614beb014ae91f11f8dd24f2d14",
+          "planned_course_spec": "33d410f59d92abc8ca4b45638a2a73b7815349f36b9322b9eae88f9532142add",
+          "reconstructed_upper_3d": "df11f04138fbeb639eeb1a1bfb65a21b93657a77e8af68fe8336e67d3020a2f3",
+          "reconstructed_nominal_3d": "006c9dfc69cc9ec2d1ec748c60df5eb0730e0e33ac205ebe8b35dc02761f0f78"
+        },
+        "invariants_checked": [
+          "LEGACY_SOURCE_SPAN_PROVENANCE_VERIFIED",
+          "LIPSCHITZ_PENUMBRA_BOUND_ORDERING_0_LE_LOWER_LE_NOM_LE_UPPER",
+          "POCS_LEGACY_DVH_CONSTRAINT_SATISFACTION",
+          "FORWARD_INVERSE_RESIDUAL_LE_1e-06_GY"
+        ],
+        "max_inverse_residual_gy": 7.105427357601002e-15,
+        "all_invariants_passed": true,
+        "abstention_triggered": false,
+        "abstention_reason": null
+      },
+      "warnings": [
+        "Prior 3D dose was reconstructed from sparse legacy summary text without prior DICOM-RT. Conservative upper-bound remaining budgets include inter-course spatial uncertainty cushions."
+      ]
+    }
+  }
+}

@@ -20,6 +20,11 @@ from reirt_biobudget.io_loaders import (
     load_openkbp_patient,
 )
 from reirt_biobudget.ir import AbstentionError, CourseSpec, Modality, RadiobiologyModel
+from reirt_biobudget.legacy_reconstructor import (
+    generate_legacy_summary_text_from_ground_truth,
+    parse_legacy_treatment_summary,
+    solve_legacy_missing_dicom_budget,
+)
 from reirt_biobudget.ntcp_sobol import (
     compute_geud,
     compute_lkb_ntcp_from_geud,
@@ -185,6 +190,45 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
                 "output_mode": {"type": "string", "enum": ["eqd2", "ntcp"], "default": "eqd2"},
                 "tre_sigma_mm": {"type": "number", "default": 2.5},
                 "n_base_pow2": {"type": "integer", "default": 7},
+            },
+            "required": ["patient_dir"],
+        },
+    },
+    {
+        "name": "biobudget_parse_legacy_summary",
+        "description": (
+            "Parse an unstructured outside-hospital PDF/text treatment summary (when prior DICOM-RT "
+            "files are missing) into a TG-263 normalized LegacyCourseRecord with verbatim character "
+            "source spans and hard abstention gates on missing fractionation or conflicting DVHs."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "summary_text": {"type": "string", "description": "Raw text extracted from outside-hospital PDF summary."},
+                "record_id": {"type": "string", "default": "LEGACY_SUMMARY_01"},
+            },
+            "required": ["summary_text"],
+        },
+    },
+    {
+        "name": "biobudget_reconstruct_legacy_budget",
+        "description": (
+            "Missing-DICOM Physics-Constrained 3D Prior-Dose Envelope Reconstruction: given an "
+            "outside-hospital text summary (or blinded OpenKBP patient) and current CT anatomy, "
+            "reconstructs Lipschitz-penumbra + POCS 3D dose bounds [D_lower, D_nom, D_upper], "
+            "computes safe Course-2 remaining physical dose ceilings, and quantifies DICOM Recovery Value (Delta Gy)."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "patient_dir": {"type": "string", "description": "Current CT anatomy directory (e.g. data/openkbp/pt_1)."},
+                "summary_text": {
+                    "type": ["string", "null"],
+                    "default": None,
+                    "description": "Optional raw legacy summary text; if omitted, runs blinded OpenKBP ground-truth validation.",
+                },
+                "planned_n_fractions": {"type": "integer", "default": 5},
+                "planned_rx_gy": {"type": "number", "default": 35.0},
             },
             "required": ["patient_dir"],
         },
@@ -361,6 +405,64 @@ def dispatch_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
             n_base_pow2=int(arguments.get("n_base_pow2", 7)),
         )
         return res.model_dump(mode="json")
+
+    if name == "biobudget_parse_legacy_summary":
+        rec = parse_legacy_treatment_summary(
+            str(arguments["summary_text"]),
+            record_id=str(arguments.get("record_id", "LEGACY_SUMMARY_01")),
+        )
+        return rec.model_dump(mode="json")
+
+    if name == "biobudget_reconstruct_legacy_budget":
+        patient = load_openkbp_patient(Path(arguments["patient_dir"]))
+        case = build_reirradiation_benchmark_from_openkbp(
+            patient,
+            planned_n_fractions=int(arguments.get("planned_n_fractions", 5)),
+            planned_rx_gy=float(arguments.get("planned_rx_gy", 35.0)),
+        )
+        raw_text = arguments.get("summary_text")
+        blinded_truth = None
+        if raw_text is None:
+            from reirt_biobudget.dir_envelope import warp_array
+            from reirt_biobudget.ir import Volume3D
+
+            warped_truth = warp_array(
+                case.prior_dose_course1.data,
+                case.nominal_dvf_mm,
+                case.ct_course2.spacing_mm,
+                order=1,
+                cval=0.0,
+                clamp_nonnegative=True,
+            )
+            blinded_truth = Volume3D(
+                data=warped_truth,
+                spacing_mm=case.ct_course2.spacing_mm,
+                origin_mm=case.ct_course2.origin_mm,
+                frame_of_reference_uid=case.planned_course.frame_of_reference_uid,
+                units="Gy",
+                name="hidden_truth",
+            )
+            raw_text = generate_legacy_summary_text_from_ground_truth(
+                patient_id=patient.patient_id,
+                prior_dose=case.prior_dose_course1,
+                oar_masks=case.oar_masks_course1,
+            )
+        rec = parse_legacy_treatment_summary(
+            str(raw_text), record_id=f"LEGACY_{patient.patient_id.upper()}"
+        )
+        approx_ptv = patient.ptv_masks.get("PTV70")
+        out = solve_legacy_missing_dicom_budget(
+            case_id=f"{case.case_id}-NO-DICOM",
+            legacy_record=rec,
+            planned_course=case.planned_course,
+            body_mask_current=case.body_mask_course2,
+            oar_masks_current=case.oar_masks_course2,
+            spacing_mm=case.ct_course2.spacing_mm,
+            origin_mm=case.ct_course2.origin_mm,
+            approx_prior_ptv_current=approx_ptv,
+            hidden_ground_truth_dose=blinded_truth,
+        )
+        return out.audit.model_dump(mode="json")
 
     raise KeyError(f"Unknown MCP tool '{name}'")
 

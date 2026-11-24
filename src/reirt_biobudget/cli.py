@@ -17,6 +17,7 @@ from reirt_biobudget.dicom_io import (
     export_remaining_budget_dicom_rtdose,
     write_dicom_deformable_reg,
 )
+from reirt_biobudget.dir_envelope import warp_array
 from reirt_biobudget.harness.agent_orchestrator import (
     emit_estro_eortc_markdown,
     run_frontier_investigation,
@@ -26,12 +27,19 @@ from reirt_biobudget.io_loaders import (
     build_reirradiation_benchmark_from_openkbp,
     load_openkbp_patient,
 )
+from reirt_biobudget.ir import Volume3D
+from reirt_biobudget.legacy_reconstructor import (
+    generate_legacy_summary_text_from_ground_truth,
+    parse_legacy_treatment_summary,
+    solve_legacy_missing_dicom_budget,
+)
 from reirt_biobudget.ntcp_sobol import evaluate_oar_ntcp_envelope, run_joint_sobol_sensitivity
 from reirt_biobudget.ontology import get_oar_constraint, normalize_tg263
 from reirt_biobudget.visualization import (
     generate_all_publication_figures,
     plot_fig6_cohort_landmark_validation,
     plot_fig7_sobol_ntcp_analysis,
+    plot_fig8_missing_dicom_reconstruction,
 )
 
 
@@ -65,6 +73,17 @@ def main() -> None:
 
     p_lookup = sub.add_parser("lookup", help="Look up TG-263 OAR normalization & clinical constraints.")
     p_lookup.add_argument("oar_name", help="Raw or TG-263 OAR name.")
+
+    p_leg = sub.add_parser(
+        "legacy-reconstruct",
+        help="Reconstruct 3D prior-dose envelope from legacy PDF/text summary (no prior DICOM) & run blinded OpenKBP validation.",
+    )
+    p_leg.add_argument("--data-root", default="data/openkbp", help="Directory containing OpenKBP pt_* folders.")
+    p_leg.add_argument("--patients", nargs="+", default=["pt_1", "pt_2", "pt_3"], help="Patient IDs for blinded validation.")
+    p_leg.add_argument("--summary-file", default=None, help="Optional outside-hospital summary .txt file to parse for first patient.")
+    p_leg.add_argument("--planned-fx", type=int, default=5, help="Planned Course-2 fraction count.")
+    p_leg.add_argument("--planned-rx", type=float, default=35.0, help="Planned Course-2 prescription (Gy).")
+    p_leg.add_argument("--out-dir", default="outputs", help="Root output directory.")
 
     sub.add_parser("mcp", help="Start JSON-RPC 2.0 MCP stdio server for frontier agent harnesses.")
 
@@ -238,6 +257,115 @@ def main() -> None:
             )
         print(f"Report:  {rep_path}")
         print(f"Figures: {f6.name}, {f7.name}")
+        return
+
+    if args.command == "legacy-reconstruct":
+        out_root = Path(args.out_dir)
+        fig_dir = out_root / "figures"
+        rep_dir = out_root / "reports"
+        fig_dir.mkdir(parents=True, exist_ok=True)
+        rep_dir.mkdir(parents=True, exist_ok=True)
+
+        data_root = Path(args.data_root)
+        cohort_audits = []
+        primary_case = None
+        primary_out = None
+        primary_truth = None
+        primary_summary_text = ""
+
+        for idx, pid in enumerate(args.patients):
+            patient = load_openkbp_patient(data_root / pid)
+            case = build_reirradiation_benchmark_from_openkbp(
+                patient,
+                planned_n_fractions=args.planned_fx,
+                planned_rx_gy=args.planned_rx,
+            )
+            warped_truth = warp_array(
+                case.prior_dose_course1.data,
+                case.nominal_dvf_mm,
+                case.ct_course2.spacing_mm,
+                order=1,
+                cval=0.0,
+                clamp_nonnegative=True,
+            )
+            truth_vol = Volume3D(
+                data=warped_truth,
+                spacing_mm=case.ct_course2.spacing_mm,
+                origin_mm=case.ct_course2.origin_mm,
+                frame_of_reference_uid=case.planned_course.frame_of_reference_uid,
+                units="Gy",
+                name=f"{pid}_hidden_truth",
+            )
+            if idx == 0 and args.summary_file:
+                raw_text = Path(args.summary_file).read_text(encoding="utf-8")
+            else:
+                raw_text = generate_legacy_summary_text_from_ground_truth(
+                    patient_id=pid,
+                    prior_dose=case.prior_dose_course1,
+                    oar_masks=case.oar_masks_course1,
+                )
+            rec = parse_legacy_treatment_summary(raw_text, record_id=f"LEGACY_{pid.upper()}")
+            approx_ptv = (
+                warp_array(
+                    patient.ptv_masks["PTV70"].astype(float),
+                    case.nominal_dvf_mm,
+                    case.ct_course2.spacing_mm,
+                    order=1,
+                    cval=0.0,
+                )
+                > 0.5
+                if "PTV70" in patient.ptv_masks
+                else None
+            )
+            out = solve_legacy_missing_dicom_budget(
+                case_id=f"{case.case_id}-NO-DICOM",
+                legacy_record=rec,
+                planned_course=case.planned_course,
+                body_mask_current=case.body_mask_course2,
+                oar_masks_current=case.oar_masks_course2,
+                spacing_mm=case.ct_course2.spacing_mm,
+                origin_mm=case.ct_course2.origin_mm,
+                approx_prior_ptv_current=approx_ptv,
+                hidden_ground_truth_dose=truth_vol,
+            )
+            cohort_audits.append((pid, out.audit))
+            if idx == 0:
+                primary_case = case
+                primary_out = out
+                primary_truth = truth_vol
+                primary_summary_text = raw_text
+
+        assert primary_case is not None and primary_out is not None and primary_truth is not None
+        f8 = plot_fig8_missing_dicom_reconstruction(
+            primary_case, primary_out, primary_truth, cohort_audits, fig_dir
+        )
+
+        payload = {
+            "primary_legacy_summary_text": primary_summary_text,
+            "cohort_blinded_audits": {
+                pid: aud.model_dump(mode="json") for pid, aud in cohort_audits
+            },
+        }
+        rep_path = rep_dir / "legacy_missing_dicom_audit.json"
+        rep_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+        print(f"Missing-DICOM Blinded Validation Completed ({len(cohort_audits)} patients):")
+        for pid, aud in cohort_audits:
+            sc = next((s for s in aud.oar_summaries if s.tg263_name == "SpinalCord"), None)
+            sc_str = (
+                f"SpinalCord Legacy={sc.legacy_remaining_physical_ceiling_gy:.1f} Gy vs "
+                f"DICOM={sc.true_dicom_remaining_physical_ceiling_gy:.1f} Gy "
+                f"(Value={sc.dicom_recovery_value_gy:+.1f} Gy, Safe={sc.envelope_safely_bounds_truth})"
+                if sc
+                else ""
+            )
+            print(
+                f"  - {pid}: FitErr={aud.max_constraint_fit_error_gy:.3f} Gy | "
+                f"UpperSafety={aud.truth_voxel_upper_safety_rate_pct:.1f}% | "
+                f"InvRes={aud.max_inverse_residual_gy:.2e} Gy | {sc_str}"
+            )
+        print(f"Report: {rep_path}")
+        print(f"Figure: {f8.name}")
 
 
 if __name__ == "__main__":

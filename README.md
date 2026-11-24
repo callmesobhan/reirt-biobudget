@@ -6,11 +6,11 @@
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-2E7D32?style=flat-square)](LICENSE)
-[![Tests: 29/29 Passing](https://img.shields.io/badge/Tests-29%2F29%20Passing-009E73?style=flat-square&logo=pytest&logoColor=white)](tests/)
+[![Tests: 34/34 Passing](https://img.shields.io/badge/Tests-34%2F34%20Passing-009E73?style=flat-square&logo=pytest&logoColor=white)](tests/)
 [![CI: GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
 [![Ruff: 0 Errors](https://img.shields.io/badge/Lint-Ruff%20Clean-0072B2?style=flat-square)](pyproject.toml)
 [![Inverse Residual: 2.84e-14 Gy](https://img.shields.io/badge/Inverse%20Residual-2.84e--14%20Gy-6A1B9A?style=flat-square)](docs/AUDIT_REPORT.md)
-[![MCP: 7 Tools](https://img.shields.io/badge/Agent%20Harness-MCP%207%20Tools-D55E00?style=flat-square)](src/reirt_biobudget/harness/mcp_server.py)
+[![MCP: 9 Tools](https://img.shields.io/badge/Agent%20Harness-MCP%209%20Tools-D55E00?style=flat-square)](src/reirt_biobudget/harness/mcp_server.py)
 [![Data: OpenKBP CC BY 4.0](https://img.shields.io/badge/Cohort%20Data-OpenKBP%20pt__1..3%20(CC%20BY%204.0)-546E7A?style=flat-square)](DATA_SOURCES_AND_CITATIONS.md)
 
 <br>
@@ -95,8 +95,9 @@ flowchart LR
 | [`dicom_io.py`](src/reirt_biobudget/dicom_io.py) | Clinical DICOM-RT interoperability: **Deformable Spatial Registration (`REG`, `1.2.840.10008.5.1.4.1.1.66.3`)** reader/writer, **TPS-importable `RTDOSE`** budget export, and **closed-planar `RTSTRUCT`** iso-ceiling shells | Full lossless write $\to$ read round-trip verified (`< 0.005 Gy` quantization, `< 1e-5 mm` DVF error) |
 | [`ntcp_sobol.py`](src/reirt_biobudget/ntcp_sobol.py) | Overflow-safe **LKB / gEUD cumulative NTCP with 90% CIs** (Lyman 1985; Burman 1991; QUANTEC) + **Saltelli–Jansen QMC global Sobol' sensitivity** ($S_1$, $S_T$, interaction $S_T - S_1$) | Closed-form $\mathrm{TD}_{50} \to 50.0\%$ identity; $0 \le S_1 \le S_T \le 1$ verified across 1,536 QMC draws |
 | [`cohort.py`](src/reirt_biobudget/cohort.py) | Multi-patient OpenKBP cohort benchmark (`pt_1`–`pt_3`), **AAPM TG-132 anatomical landmark TRE** validation, and **empirical 90% envelope coverage** stress testing | Pre-DIR `1.24–1.55 mm` $\to$ Post-DIR `< 0.008 mm`; `82.5–94.8%` calibrated 90% coverage |
+| [`legacy_reconstructor.py`](src/reirt_biobudget/legacy_reconstructor.py) | **Missing-DICOM / Legacy-PDF 3D Prior-Dose Envelope Reconstructor** (unavailable in RayStation/MIM/Velocity): source-span summary parser + Lipschitz-penumbra & POCS convex 3D reconstruction + **DICOM Recovery Value (+Δ Gy)** quantifier | `0.000 Gy` DVH constraint fit error; **`88.1–100.0%`** blinded upper-bound safety on real OpenKBP `pt_1`–`pt_3`; hard abstention on missing Rx or conflicting DVHs |
 | [`provenance.py`](src/reirt_biobudget/provenance.py) | SHA-256 checksums over every 3D volume, DVF, and Pydantic spec + hard `AbstentionError` gate | Refuses execution on $J \le 0$, $\mathrm{ICE}_{p95} > 5\ \mathrm{mm}$, or missing/mismatched `FrameOfReferenceUID` |
-| [`agent_orchestrator.py`](src/reirt_biobudget/harness/agent_orchestrator.py) & [`mcp_server.py`](src/reirt_biobudget/harness/mcp_server.py) | 4-axis adversarial sweep, 2D safety phase diagram, 6-schedule co-design matrix, Critic-Verifier, **JSON-RPC 2.0 MCP server (7 tools)** | Every numeric dossier claim cross-checked against engine ledger before emission |
+| [`agent_orchestrator.py`](src/reirt_biobudget/harness/agent_orchestrator.py) & [`mcp_server.py`](src/reirt_biobudget/harness/mcp_server.py) | 4-axis adversarial sweep, 2D safety phase diagram, 6-schedule co-design matrix, Critic-Verifier, **JSON-RPC 2.0 MCP server (9 tools)** | Every numeric dossier claim cross-checked against engine ledger before emission |
 
 ---
 
@@ -110,10 +111,11 @@ Evaluated end-to-end on real de-identified clinical head-and-neck IMRT anatomy a
 | **AAPM TG-132 Jacobian Determinant $J(\mathbf{x})$** | `[0.978, 1.163]` (`0` folded) | $J(\mathbf{x}) > 0$ everywhere | PASS |
 | **AAPM TG-132 Inverse-Consistency Error ($\mathrm{ICE}_{p95}$)** | `0.0082 mm` (`8.2 μm`) | $\le 2.0\ \mathrm{mm}$ | PASS |
 | **Independent Critic-Verifier Audit** | `0` discrepancies | All invariants verified | PASS |
-| **Automated Test Suite (`pytest`) & Linter (`ruff`)** | `29 / 29` passed (`0` warnings) · `0` lint errors | 100% pass (CI Py 3.11 & 3.12) | PASS |
+| **Automated Test Suite (`pytest`) & Linter (`ruff`)** | `34 / 34` passed (`0` warnings) · `0` lint errors | 100% pass (CI Py 3.11 & 3.12) | PASS |
 | **3-Patient OpenKBP Cohort Landmark TRE (`pt_1`–`pt_3`)** | Pre `1.24–1.55 mm` $\to$ Post `< 0.008 mm` | AAPM TG-132 $\le 2.0\ \mathrm{mm}$ | PASS |
 | **Empirical 90% DIR-Envelope Coverage (`pt_1`–`pt_3`)** | `82.5%` · `86.2%` · `94.8%` | Nominal `90%` band | Calibrated |
 | **Saltelli–Sobol' Global Variance (`SpinalCord` / `Brainstem`)** | DIR $S_T = 0.72$ / $0.59$ (vs. Mandible Recov. $S_T = 0.99$) | Joint 4D QMC (1,536 evals) | Quantified |
+| **Blinded Missing-DICOM 3D Reconstruction (`pt_1`–`pt_3`)** | `0.000 Gy` fit err · `88.1–100.0%` upper safety | `+0.1 to +2.5 Gy` DICOM recovery value | PASS |
 
 ---
 
@@ -163,6 +165,12 @@ All figures are rendered at **300 DPI** (PNG + vector PDF) in radiological orien
 
 ---
 
+### 8. Missing-DICOM / Legacy-PDF Physics-Constrained 3D Prior-Dose Envelope Reconstruction
+![Figure 8: Blinded missing-DICOM 3D prior-dose reconstruction vs hidden OpenKBP ground truth and Value of Recovering Original DICOM](outputs/figures/fig8_missing_dicom_reconstruction.png)
+*(a–c) Blinded validation on OpenKBP `pt_1`: hidden real 3D dose vs. reconstructed nominal 3D dose from unstructured outside-hospital PDF text alone (zero prior DICOM) vs. Lipschitz-penumbra conservative upper bound $D_{\mathrm{upper}}(\mathbf{x})$. (d) Blinded OAR DVH envelopes vs. hidden ground truth (`100.0%` upper-bound safety on `pt_1`). (e) Quantified **Value of Recovering Original DICOM (`+Δ Gy` unlocked)** across `pt_1`, `pt_2`, and `pt_3` for `SpinalCord` and `Brainstem`.*
+
+---
+
 ## Quickstart
 
 ```bash
@@ -178,10 +186,13 @@ uv pip install --python .venv/bin/python -e ".[dev]"
 # 3. Run 3-patient OpenKBP cohort + landmark TRE + K=2 multi-course + Saltelli-Sobol + LKB NTCP (Figs 6-7)
 .venv/bin/reirt-biobudget cohort --data-root data/openkbp --out-dir outputs
 
-# 4. Inspect any OAR's AAPM TG-263 normalization & sourced clinical constraints
+# 4. Run Missing-DICOM / Legacy-PDF blinded 3D prior-dose envelope reconstruction & DICOM Recovery Value (Fig 8)
+.venv/bin/reirt-biobudget legacy-reconstruct --data-root data/openkbp --out-dir outputs
+
+# 5. Inspect any OAR's AAPM TG-263 normalization & sourced clinical constraints
 .venv/bin/reirt-biobudget lookup spinal_cord
 
-# 5. Run the full unit, K-course, DICOM REG/RTDOSE/RTSTRUCT, Sobol/NTCP, abstention & MCP audit suite
+# 6. Run the full unit, K-course, DICOM REG/RTDOSE/RTSTRUCT, Sobol/NTCP, Missing-DICOM & MCP audit suite
 .venv/bin/pytest -v tests/
 ```
 

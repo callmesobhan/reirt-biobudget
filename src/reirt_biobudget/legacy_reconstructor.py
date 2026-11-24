@@ -384,7 +384,7 @@ def solve_legacy_missing_dicom_budget(
     dataset_citation: str = (
         "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845"
     ),
-    dataset_license: str = "CC BY 4.0 (validation ground truth) / Apache-2.0 (reconstructor)",
+    dataset_license: str = "CC BY 4.0 (validation ground truth) / Non-Commercial Research & Personal Use (reconstructor)",
 ) -> LegacyReconstructionOutput:
     """Reconstruct 3D prior-dose envelope [D_lower, D_nom, D_upper] from sparse legacy records
     and invert into a conservative Course-2 remaining physical dose ceiling.

@@ -2,9 +2,9 @@ cff-version: 1.2.0
 title: "reirt-biobudget: 3D Deformable Biophysical Dose-Accumulation & Remaining-Budget Engine"
 message: "If you use this software in academic research, please cite this repository and the underlying OpenKBP dataset."
 type: software
-version: "0.1.0"
-date-released: "2026-11-21"
-license: Apache-2.0
+version: "0.3.0"
+date-released: "2026-11-24"
+license-url: "https://github.com/callmesobhan/reirt-biobudget/blob/main/LICENSE"
 authors:
   - name: "Sobhan"
     alias: "callmesobhan"

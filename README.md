@@ -5,7 +5,7 @@
 ### 3D Deformable Biophysical Dose-Accumulation, DIR-Uncertainty Envelope & Inverse Remaining-Budget Engine with Frontier Agent Harness
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-2E7D32?style=flat-square)](LICENSE)
+[![License: Non-Commercial Research & Personal](https://img.shields.io/badge/License-Non--Commercial%20Research%20%26%20Personal-B71C1C?style=flat-square)](LICENSE)
 [![Tests: 34/34 Passing](https://img.shields.io/badge/Tests-34%2F34%20Passing-009E73?style=flat-square&logo=pytest&logoColor=white)](tests/)
 [![CI: GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
 [![Ruff: 0 Errors](https://img.shields.io/badge/Lint-Ruff%20Clean-0072B2?style=flat-square)](pyproject.toml)
@@ -318,4 +318,7 @@ reirt-biobudget/
 
 ## License
 
-Released under the **Apache License 2.0** (see [`LICENSE`](LICENSE)). Upstream OpenKBP sample data retains its original **CC BY 4.0 / MIT** license (see [`data/openkbp/ATTRIBUTION.md`](data/openkbp/ATTRIBUTION.md) and [`data/openkbp/UPSTREAM_LICENSE_OPENKBP.txt`](data/openkbp/UPSTREAM_LICENSE_OPENKBP.txt)).
+Released under the **Non-Commercial Academic Research & Personal Use License v1.0** (see [`LICENSE`](LICENSE)):
+- **Permitted:** Personal non-commercial use, educational use, and non-commercial academic/scientific research **with mandatory citation** (see [`CITATION.cff`](CITATION.cff)).
+- **Prohibited without written permission:** Any commercial use, commercial clinical deployment, paid SaaS/API hosting, or integration into commercial software/TPS products. For commercial licensing inquiries, contact [`@callmesobhan`](https://github.com/callmesobhan).
+- **Third-Party Benchmark Data:** Verbatim upstream OpenKBP sample files under [`data/openkbp/`](data/openkbp/) remain governed by their original **CC BY 4.0 / MIT** license (see [`data/openkbp/ATTRIBUTION.md`](data/openkbp/ATTRIBUTION.md) and [`data/openkbp/UPSTREAM_LICENSE_OPENKBP.txt`](data/openkbp/UPSTREAM_LICENSE_OPENKBP.txt)).

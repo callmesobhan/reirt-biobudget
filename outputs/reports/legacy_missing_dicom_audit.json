@@ -230,7 +230,7 @@
         "case_id": "OPENKBP-PT_1-REIRT-NO-DICOM",
         "dataset_source": "Legacy PDF Summary (No Prior DICOM-RT)",
         "dataset_citation": "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",
-        "dataset_license": "CC BY 4.0 (validation ground truth) / Apache-2.0 (reconstructor)",
+        "dataset_license": "CC BY 4.0 (validation ground truth) / Non-Commercial Research & Personal Use (reconstructor)",
         "input_checksums": {
           "legacy_record_spec": "4457b396829dea67de42c2cbe9b95fbe73ba48d3c679dcf98e7dc2cc101c5289",
           "planned_course_spec": "d5aa03af784bd0197c12712b2ebd8242de50967b137dd7e8db8986ebe4cfec71",
@@ -513,7 +513,7 @@
         "case_id": "OPENKBP-PT_2-REIRT-NO-DICOM",
         "dataset_source": "Legacy PDF Summary (No Prior DICOM-RT)",
         "dataset_citation": "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",
-        "dataset_license": "CC BY 4.0 (validation ground truth) / Apache-2.0 (reconstructor)",
+        "dataset_license": "CC BY 4.0 (validation ground truth) / Non-Commercial Research & Personal Use (reconstructor)",
         "input_checksums": {
           "legacy_record_spec": "0013663fe3250ff0483a73e1eb7e6e214296841edd7045b812097c85be1c1feb",
           "planned_course_spec": "2d5b240c1873e1deec4ddea23f1b22271b71c1537ae7f3b0f195a101e8234949",
@@ -732,7 +732,7 @@
         "case_id": "OPENKBP-PT_3-REIRT-NO-DICOM",
         "dataset_source": "Legacy PDF Summary (No Prior DICOM-RT)",
         "dataset_citation": "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",
-        "dataset_license": "CC BY 4.0 (validation ground truth) / Apache-2.0 (reconstructor)",
+        "dataset_license": "CC BY 4.0 (validation ground truth) / Non-Commercial Research & Personal Use (reconstructor)",
         "input_checksums": {
           "legacy_record_spec": "43883ad299273d9f8a4a51f9616f8a57a4d10614beb014ae91f11f8dd24f2d14",
           "planned_course_spec": "33d410f59d92abc8ca4b45638a2a73b7815349f36b9322b9eae88f9532142add",

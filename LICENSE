@@ -1,27 +1,78 @@
-Apache License
-Version 2.0, January 2004
-http://www.apache.org/licenses/
+NON-COMMERCIAL ACADEMIC RESEARCH AND PERSONAL USE LICENSE (v1.0)
+==================================================================
 
-Copyright 2026 Sobhan (callmesobhan)
+Copyright (c) 2026 Sobhan (GitHub: callmesobhan). All rights reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+This license governs use of the `reirt-biobudget` software, source code,
+mathematical engines, agent harnesses, documentation, and original figures
+(collectively, the "Software").
 
-    http://www.apache.org/licenses/LICENSE-2.0
+1. PERMITTED USES (NON-COMMERCIAL RESEARCH & PERSONAL USE ONLY)
+   Subject to strict compliance with Sections 2 through 6 below, the Copyright
+   Holder grants you a revocable, non-exclusive, non-transferable,
+   non-sublicensable, royalty-free license to copy, run, study, and modify the
+   Software solely for:
+     (a) Non-commercial academic, scientific, or educational research conducted
+         by individuals, universities, or non-profit research institutions; and
+     (b) Personal, non-commercial study, evaluation, or experimentation.
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+2. MANDATORY ATTRIBUTION AND CITATION
+   If you use the Software, or any derivative or output produced by it, in any
+   academic publication, preprint, thesis, conference presentation, technical
+   report, or public non-commercial repository, you MUST:
+     (a) Retain this license file and all copyright notices in full;
+     (b) Cite the `reirt-biobudget` repository as specified in `CITATION.cff`; and
+     (c) Cite all underlying third-party benchmark datasets (including OpenKBP,
+         Babier et al., Medical Physics 2021;48(9):5549-5561,
+         DOI: 10.1002/mp.14845) as documented in `DATA_SOURCES_AND_CITATIONS.md`.
 
--------------------------------------------------------------------------------
-RESEARCH & CLINICAL SAFETY DISCLAIMER
--------------------------------------------------------------------------------
-`reirt-biobudget` is academic research and educational medical physics software.
-IT IS NOT A MEDICAL DEVICE and has not been cleared or approved by the FDA,
-CE/MDR, or any regulatory authority for clinical diagnosis, treatment planning,
-or patient dose decision-making. Any clinical re-irradiation decision must be
-performed using clinically commissioned systems under the responsibility of
-qualified radiation oncologists and board-certified medical physicists.
+3. STRICT PROHIBITION ON COMMERCIAL USE
+   NO COMMERCIAL USE IS PERMITTED under this license without a separate,
+   explicit written commercial license agreement signed by the Copyright Holder.
+   Prohibited commercial uses include, without limitation:
+     (a) Selling, licensing, sublicensing, renting, or distributing the
+         Software or any derivative work for monetary or commercial consideration;
+     (b) Incorporating the Software, in whole or in part, into any commercial
+         product, treatment planning system (TPS), clinical software suite,
+         cloud service, SaaS platform, or paid API;
+     (c) Using the Software to provide paid consulting, clinical billing, or
+         commercial services to third parties; or
+     (d) Using the Software inside a for-profit organization for commercial
+         product development, proprietary model training, or commercial
+         benchmarking without prior written authorization.
+
+   For commercial licensing inquiries, contact the Copyright Holder via GitHub
+   (https://github.com/callmesobhan).
+
+4. NON-COMMERCIAL DERIVATIVES AND RESERVATION OF RIGHTS
+   Any non-commercial modification or public fork of the Software must be
+   distributed under these same Non-Commercial Academic Research and Personal
+   Use terms, with prominent notice of all modifications made. Except for the
+   limited permissions expressly granted in Section 1, all right, title,
+   interest, and patent rights in and to the Software are reserved by the
+   Copyright Holder.
+
+5. THIRD-PARTY DATA CARVE-OUT
+   Verbatim third-party public benchmark files located under `data/openkbp/`
+   are NOT covered by this proprietary license and remain governed exclusively
+   by their original upstream Creative Commons Attribution 4.0 International
+   (CC BY 4.0) / MIT licenses (see `data/openkbp/ATTRIBUTION.md` and
+   `data/openkbp/UPSTREAM_LICENSE_OPENKBP.txt`).
+
+6. RESEARCH & CLINICAL SAFETY DISCLAIMER — NOT A MEDICAL DEVICE
+   `reirt-biobudget` is academic research and educational medical physics
+   software. IT IS NOT A MEDICAL DEVICE and has not been cleared, certified, or
+   approved by the FDA, CE/MDR, or any regulatory authority for clinical
+   diagnosis, treatment planning, or patient dose decision-making. Any clinical
+   re-irradiation decision must be performed using clinically commissioned
+   systems under the responsibility of qualified radiation oncologists and
+   board-certified medical physicists.
+
+7. DISCLAIMER OF WARRANTY AND LIMITATION OF LIABILITY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, AND NON-INFRINGEMENT. IN NO
+   EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY CLAIM,
+   DAMAGES, CLINICAL INJURY, OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+   CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH
+   THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

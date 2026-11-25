@@ -44,10 +44,13 @@ MCP_PROTOCOL_VERSION = "2024-11-05"
 TOOL_SCHEMAS: list[dict[str, Any]] = [
     {
         "name": "biobudget_lookup_tg263_oar",
-        "description": (
-            "Normalize an OAR name to AAPM TG-263 and return sourced radiobiology parameters "
-            "(alpha/beta, uncertainty range, LQL d_T, cumulative EQD2 limits, recovery ceiling, DOIs)."
-        ),
+        "description": "Normalize an OAR name to AAPM TG-263 and return sourced radiobiology parameters (alpha/beta, uncertainty range, LQL d_T, cumulative EQD2 limits, recovery ceiling, DOIs).",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -58,10 +61,13 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     },
     {
         "name": "biobudget_compute_eqd2",
-        "description": (
-            "Exact deterministic forward radiobiology solver: physical dose (Gy) -> BED & EQD2 (Gy) "
-            "across LQ, LQL (Astrahan 2008), Lea-Catcheside (Dale 1985), or McNamara variable proton RBE."
-        ),
+        "description": "Exact deterministic forward radiobiology solver: physical dose (Gy) -> BED & EQD2 (Gy) across LQ, LQL (Astrahan 2008), Lea-Catcheside (Dale 1985), or McNamara variable proton RBE.",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -90,11 +96,13 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     },
     {
         "name": "biobudget_invert_remaining_dose",
-        "description": (
-            "Exact analytical inverse solver: convert remaining OAR EQD2 budget (Gy) into "
-            "maximum safe Course-2 physical dose (Gy) for a chosen schedule/modality, with "
-            "independent forward-inverse residual verification."
-        ),
+        "description": "Exact analytical inverse solver: convert remaining OAR EQD2 budget (Gy) into maximum safe Course-2 physical dose (Gy) for a chosen schedule/modality, with independent forward-inverse residual verification.",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -122,10 +130,13 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     },
     {
         "name": "biobudget_compute_recovery_credit",
-        "description": (
-            "Compute conservative OAR time-dependent tissue recovery credit with hard zero-recovery "
-            "enforcement below minimum elapsed months (Nieder 2006 / Sahgal HyTEC 2021)."
-        ),
+        "description": "Compute conservative OAR time-dependent tissue recovery credit with hard zero-recovery enforcement below minimum elapsed months (Nieder 2006 / Sahgal HyTEC 2021).",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -138,11 +149,13 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     },
     {
         "name": "biobudget_run_openkbp_investigation",
-        "description": (
-            "Run the complete 3D diffeomorphic DIR-uncertainty envelope, adversarial assumption "
-            "tipping-point sweep, 6-schedule tradeoff matrix, and independent Critic-Verifier audit "
-            "on a public OpenKBP clinical head-and-neck case."
-        ),
+        "description": "Run the complete 3D diffeomorphic DIR-uncertainty envelope, adversarial assumption tipping-point sweep, 6-schedule tradeoff matrix, and independent Critic-Verifier audit on a public OpenKBP clinical head-and-neck case.",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -158,10 +171,13 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     },
     {
         "name": "biobudget_compute_lkb_ntcp",
-        "description": (
-            "Compute overflow-safe Generalized Equivalent Uniform Dose (gEUD) and Lyman-Kutcher-Burman "
-            "(LKB) Normal Tissue Complication Probability (%) using sourced QUANTEC/Burman parameters."
-        ),
+        "description": "Compute overflow-safe Generalized Equivalent Uniform Dose (gEUD) and Lyman-Kutcher-Burman (LKB) Normal Tissue Complication Probability (%) using sourced QUANTEC/Burman parameters.",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -177,11 +193,13 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     },
     {
         "name": "biobudget_run_sobol_sensitivity",
-        "description": (
-            "Run exact Saltelli-Jansen quasi-Monte Carlo global Sobol sensitivity analysis (S_i, S_Ti, "
-            "and interaction S_Ti - S_i) across DIR spatial registration, tissue recovery, alpha/beta, "
-            "and Course-2 high-dose regime for a real OpenKBP clinical patient."
-        ),
+        "description": "Run exact Saltelli-Jansen quasi-Monte Carlo global Sobol sensitivity analysis (S_i, S_Ti, and interaction S_Ti - S_i) across DIR spatial registration, tissue recovery, alpha/beta, and Course-2 high-dose regime for a real OpenKBP clinical patient.",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -196,11 +214,13 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     },
     {
         "name": "biobudget_parse_legacy_summary",
-        "description": (
-            "Parse an unstructured outside-hospital PDF/text treatment summary (when prior DICOM-RT "
-            "files are missing) into a TG-263 normalized LegacyCourseRecord with verbatim character "
-            "source spans and hard abstention gates on missing fractionation or conflicting DVHs."
-        ),
+        "description": "Parse an unstructured outside-hospital PDF/text treatment summary (when prior DICOM-RT files are missing) into a TG-263 normalized LegacyCourseRecord with verbatim character source spans and hard abstention gates on missing fractionation or conflicting DVHs.",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -212,12 +232,13 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
     },
     {
         "name": "biobudget_reconstruct_legacy_budget",
-        "description": (
-            "Missing-DICOM Physics-Constrained 3D Prior-Dose Envelope Reconstruction: given an "
-            "outside-hospital text summary (or blinded OpenKBP patient) and current CT anatomy, "
-            "reconstructs Lipschitz-penumbra + POCS 3D dose bounds [D_lower, D_nom, D_upper], "
-            "computes safe Course-2 remaining physical dose ceilings, and quantifies DICOM Recovery Value (Delta Gy)."
-        ),
+        "description": "Missing-DICOM Physics-Constrained 3D Prior-Dose Envelope Reconstruction: given an outside-hospital text summary (or blinded OpenKBP patient) and current CT anatomy, reconstructs Lipschitz-penumbra + POCS 3D dose bounds [D_lower, D_nom, D_upper], computes safe Course-2 remaining physical dose ceilings, and quantifies DICOM Recovery Value (Delta Gy).",
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
         "inputSchema": {
             "type": "object",
             "properties": {

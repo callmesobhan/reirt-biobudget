@@ -732,8 +732,8 @@
       }
     ],
     "provenance": {
-      "engine_version": "0.2.0",
-      "timestamp_utc": "2026-11-21T22:38:54.834945+00:00",
+      "engine_version": "0.3.0",
+      "timestamp_utc": "2026-11-25T05:10:10.259111+00:00",
       "case_id": "OPENKBP-PT_1-K2-MULTICOURSE",
       "dataset_source": "OpenKBP (ababier/open-kbp)",
       "dataset_citation": "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",

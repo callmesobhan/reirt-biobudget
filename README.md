@@ -4,14 +4,14 @@
 
 ### 3D Deformable Biophysical Dose-Accumulation, DIR-Uncertainty Envelope & Inverse Remaining-Budget Engine with Frontier Agent Harness
 
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![License: Non-Commercial Research & Personal](https://img.shields.io/badge/License-Non--Commercial%20Research%20%26%20Personal-B71C1C?style=flat-square)](LICENSE)
-[![Tests: 34/34 Passing](https://img.shields.io/badge/Tests-34%2F34%20Passing-009E73?style=flat-square&logo=pytest&logoColor=white)](tests/)
-[![CI: GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
-[![Ruff: 0 Errors](https://img.shields.io/badge/Lint-Ruff%20Clean-0072B2?style=flat-square)](pyproject.toml)
-[![Inverse Residual: 2.84e-14 Gy](https://img.shields.io/badge/Inverse%20Residual-2.84e--14%20Gy-6A1B9A?style=flat-square)](docs/AUDIT_REPORT.md)
-[![MCP: 9 Tools](https://img.shields.io/badge/Agent%20Harness-MCP%209%20Tools-D55E00?style=flat-square)](src/reirt_biobudget/harness/mcp_server.py)
-[![Data: OpenKBP CC BY 4.0](https://img.shields.io/badge/Cohort%20Data-OpenKBP%20pt__1..3%20(CC%20BY%204.0)-546E7A?style=flat-square)](DATA_SOURCES_AND_CITATIONS.md)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-1B3B6F?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![License: Non-Commercial Research & Personal](https://img.shields.io/badge/License-Non--Commercial%20Research%20%26%20Personal-7A1C24?style=flat-square)](LICENSE)
+[![Tests: 34/34 Passing](https://img.shields.io/badge/Tests-34%2F34%20Passing-2D6A4F?style=flat-square&logo=pytest&logoColor=white)](tests/)
+[![CI: GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-5C544B?style=flat-square&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
+[![Ruff: 0 Errors](https://img.shields.io/badge/Lint-Ruff%20Clean-1B3B6F?style=flat-square)](pyproject.toml)
+[![Inverse Residual: 2.84e-14 Gy](https://img.shields.io/badge/Inverse%20Residual-2.84e--14%20Gy-6B2D5C?style=flat-square)](docs/AUDIT_REPORT.md)
+[![MCP: 9 Tools](https://img.shields.io/badge/Agent%20Harness-MCP%209%20Tools-B85D19?style=flat-square)](src/reirt_biobudget/harness/mcp_server.py)
+[![Data: OpenKBP CC BY 4.0](https://img.shields.io/badge/Cohort%20Data-OpenKBP%20pt__1..3%20(CC%20BY%204.0)-5C544B?style=flat-square)](DATA_SOURCES_AND_CITATIONS.md)
 
 <br>
 

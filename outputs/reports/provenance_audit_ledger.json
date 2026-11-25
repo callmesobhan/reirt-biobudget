@@ -219,8 +219,8 @@
       }
     ],
     "provenance": {
-      "engine_version": "0.2.0",
-      "timestamp_utc": "2026-11-21T22:38:58.204746+00:00",
+      "engine_version": "0.3.0",
+      "timestamp_utc": "2026-11-25T05:09:48.509547+00:00",
       "case_id": "OPENKBP-PT_1-REIRT",
       "dataset_source": "OpenKBP public clinical dataset (pt_1)",
       "dataset_citation": "Babier A, Zhang B, Mahmood R, Moore KL, Purdie TG, McNiven AL, Chan TCY. OpenKBP: The open-access knowledge-based planning grand challenge and dataset. Medical Physics. 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",

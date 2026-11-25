@@ -226,7 +226,7 @@
       "truth_voxel_band_coverage_pct": 99.5,
       "provenance": {
         "engine_version": "0.3.0",
-        "timestamp_utc": "2026-11-24T21:03:39.399021+00:00",
+        "timestamp_utc": "2026-11-25T05:10:37.716837+00:00",
         "case_id": "OPENKBP-PT_1-REIRT-NO-DICOM",
         "dataset_source": "Legacy PDF Summary (No Prior DICOM-RT)",
         "dataset_citation": "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",
@@ -509,7 +509,7 @@
       "truth_voxel_band_coverage_pct": 92.1,
       "provenance": {
         "engine_version": "0.3.0",
-        "timestamp_utc": "2026-11-24T21:03:43.746736+00:00",
+        "timestamp_utc": "2026-11-25T05:10:42.262886+00:00",
         "case_id": "OPENKBP-PT_2-REIRT-NO-DICOM",
         "dataset_source": "Legacy PDF Summary (No Prior DICOM-RT)",
         "dataset_citation": "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",
@@ -728,7 +728,7 @@
       "truth_voxel_band_coverage_pct": 88.0,
       "provenance": {
         "engine_version": "0.3.0",
-        "timestamp_utc": "2026-11-24T21:03:47.757807+00:00",
+        "timestamp_utc": "2026-11-25T05:10:46.223180+00:00",
         "case_id": "OPENKBP-PT_3-REIRT-NO-DICOM",
         "dataset_source": "Legacy PDF Summary (No Prior DICOM-RT)",
         "dataset_citation": "Babier A et al., Medical Physics 2021;48(9):5549-5561. DOI: 10.1002/mp.14845",
